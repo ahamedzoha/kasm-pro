@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # Environment Orchestration Guidelines
@@ -15,7 +15,7 @@ alwaysApply: false
 - Custom environments for specialized scenarios
 
 ### Orchestration Service
-- Develop environment manager service in Go for performance
+- Develop environment manager service in NestJS 10
 - Implement Kubernetes custom controller pattern
 - Create environment template system for quick provisioning
 - Support resource quotas and limitations

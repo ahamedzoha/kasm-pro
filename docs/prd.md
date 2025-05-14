@@ -195,8 +195,8 @@ Create an interactive, browser-based learning platform that provides users with 
 ### 3.1.1 Frontend
 
 - Split frontend architecture:
-  - Next.js 15+ for marketing site with SSR for SEO optimization
-  - Vite React 18+ SPA for the application interface
+  - Next.js 15.3.2 for marketing site with SSR for SEO optimization
+  - Vite React 19.1 SPA for the application interface
 - WebSocket connections for real-time communication with terminal
 - Local state management with Redux or Context API
 - Optimized bundle size for fast loading
@@ -206,11 +206,12 @@ Create an interactive, browser-based learning platform that provides users with 
 
 - Microservices architecture for scalability
 - API Gateway for request routing
-- Authentication service
-- Environment management service
-- Challenge validation service
-- User progress service
-- Notification service
+- NestJS 10 for all backend services:
+  - Authentication service
+  - Environment management service
+  - Challenge validation service
+  - User progress service
+  - Notification service
 
 ### 3.1.3 Environment Orchestration
 

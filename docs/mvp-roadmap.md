@@ -76,9 +76,9 @@ The MVP will use a simplified architecture while maintaining the core design pri
 ### MVP Tech Stack
 
 - **Frontend**: 
-  - Next.js 15+ for marketing/SEO site (SSR, public content)
-  - Vite React 18+ for application with xterm.js
-- **Backend**: Node.js with Express
+  - Next.js 15.3.2 for marketing/SEO site (SSR, public content)
+  - Vite React 19.1 for application with xterm.js
+- **Backend**: NestJS 10 microservices
 - **Databases**: PostgreSQL (users), MongoDB (content)
 - **Environment**: Docker containers on a single Kubernetes cluster
 - **Authentication**: JWT-based authentication using HTTP-only, Secure cookies at parent domain (.abclearning.com) for SSO between marketing and app

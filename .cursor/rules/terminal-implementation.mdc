@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # Terminal Implementation Guidelines
@@ -31,6 +31,7 @@ alwaysApply: false
 ## Terminal Backend Service
 
 ### Session Management
+- Create NestJS 10 service with Socket.IO for terminal backend
 - Create unique session IDs for each terminal instance
 - Associate sessions with user authentication
 - Implement session timeout and cleanup

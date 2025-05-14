@@ -35,7 +35,7 @@ The platform follows a microservices architecture with the following primary com
 
 ### 2.1 Technologies
 
-- **Framework**: React 18+ (Vite for app, Next.js for marketing site with SSR/SEO)
+- **Framework**: React 19.1 (Vite for app, Next.js 15.3.2 for marketing site with SSR/SEO)
 - **State Management**: Redux Toolkit with RTK Query
 - **Styling**: Tailwind CSS with custom components
 - **Terminal**: xterm.js 5.0+ with xterm-addon-fit
@@ -74,21 +74,21 @@ The platform follows a microservices architecture with the following primary com
 
 ### 3.2 Authentication Service
 
-- **Technology**: Node.js with Express
+- **Technology**: NestJS 10
 - **Database**: PostgreSQL
 - **Authentication Methods**:
   - Email/password (bcrypt hashing)
   - OAuth (Google, GitHub)
   - SSO via SAML 2.0
 - **Session Management**: JWT with 1-hour expiry, refresh tokens
-- **Cookie-Based Auth**: JWT is set in an HTTP-only, Secure cookie at the parent domain (e.g., `.abclearning.com`) to enable SSO between marketing (Next.js) and app (Vite React) subdomains. Cookies use `SameSite=Lax`, `Secure`, and `httpOnly` flags.
+- **Cookie-Based Auth**: JWT is set in an HTTP-only, Secure cookie at the parent domain (e.g., `.abclearning.com`) to enable SSO between marketing (Next.js 15.3.2) and app (Vite React 19.1) subdomains. Cookies use `SameSite=Lax`, `Secure`, and `httpOnly` flags.
 - **Auth Status Endpoint**: `/api/auth/status` endpoint returns `{ authenticated: true/false, username }` for lightweight auth checks from the marketing site. This endpoint reads the JWT from the cookie and validates it.
 - **CORS**: API allows credentials and origins from both `abclearning.com` and `app.abclearning.com`.
 - **Logout**: Properly clears the cookie across all subdomains.
 
 ### 3.3 Environment Manager
 
-- **Technology**: Go
+- **Technology**: NestJS 10
 - **Features**:
   - Kubernetes custom controller
   - Resource quota enforcement
@@ -98,7 +98,7 @@ The platform follows a microservices architecture with the following primary com
 
 ### 3.4 Challenge Service
 
-- **Technology**: Python with FastAPI
+- **Technology**: NestJS 10
 - **Database**: MongoDB
 - **Features**:
   - Content delivery
@@ -108,7 +108,7 @@ The platform follows a microservices architecture with the following primary com
 
 ### 3.5 Terminal Service
 
-- **Technology**: Node.js with Socket.IO
+- **Technology**: NestJS 10 with Socket.IO
 - **Features**:
   - Terminal session management
   - Command logging (optional)
@@ -117,7 +117,7 @@ The platform follows a microservices architecture with the following primary com
 
 ### 3.6 Progress Service
 
-- **Technology**: Java with Spring Boot
+- **Technology**: NestJS 10
 - **Database**: PostgreSQL
 - **Features**:
   - Progress tracking

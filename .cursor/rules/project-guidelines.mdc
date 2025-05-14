@@ -11,10 +11,10 @@ This platform provides browser-based virtual environments for learning technical
 ## Architecture Guidelines
 
 ### Frontend Architecture
-- Use React 18+ with functional components and hooks
+- Use React 19.1 with functional components and hooks
 - Split frontend into two applications:
-  - Next.js 15+ for marketing site with SSR for SEO
-  - Vite React for the application interface
+  - Next.js 15.3.2 for marketing site with SSR for SEO
+  - Vite React 19.1 for the application interface
 - Implement TypeScript throughout with strict type checking
 - Use Redux Toolkit for complex state management
 - Build responsive UI with Tailwind CSS
@@ -22,9 +22,9 @@ This platform provides browser-based virtual environments for learning technical
 - Create shared component library between marketing and app
 
 ### Backend Architecture
-- Follow microservices pattern with clear service boundaries
+- Follow microservices pattern with clear service boundaries using NestJS 10
 - Structure API gateway as entry point for all requests
-- Implement JWT-based authentication (use HTTP-only, Secure cookies at the parent domain, e.g., .abclearning.com, for SSO between marketing (Next.js) and app (Vite React))
+- Implement JWT-based authentication (use HTTP-only, Secure cookies at the parent domain, e.g., .abclearning.com, for SSO between marketing (Next.js 15.3.2) and app (Vite React 19.1))
 - Use environment manager service for container orchestration
 - Create challenge service for content and validation
 - Develop terminal service for WebSocket connections

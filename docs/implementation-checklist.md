@@ -19,7 +19,7 @@
 ### Core Authentication Service
 
 - [ ] Implement user registration flows
-- [ ] Create authentication service with JWT support
+- [ ] Create authentication service with NestJS 10
 - [ ] Set up secure password handling
 - [ ] Develop user profile storage
 - [ ] Implement basic role-based access control
@@ -31,8 +31,8 @@
 ### Frontend Framework
 
 - [ ] Set up dual frontend applications:
-  - [ ] Next.js 15+ for marketing site with SSR
-  - [ ] Vite React for application interface
+  - [ ] Next.js 15.3.2 for marketing site with SSR
+  - [ ] Vite React 19.1 for application interface
 - [ ] Create shared component library and design system
 - [ ] Implement responsive layouts across both applications 
 - [ ] Set up TypeScript with strict typing

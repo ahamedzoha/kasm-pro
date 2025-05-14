@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # Challenge System Implementation Guidelines
@@ -35,7 +35,7 @@ alwaysApply: false
 - Health checks validation: Ensure applications respond correctly
 
 ### Validation Implementation
-- Develop validation engine in Python with FastAPI
+- Develop validation engine in NestJS 10
 - Create validation script executor
 - Support custom validation logic via scripts
 - Implement real-time validation feedback
