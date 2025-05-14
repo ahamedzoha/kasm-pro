@@ -23,16 +23,22 @@
 - [ ] Set up secure password handling
 - [ ] Develop user profile storage
 - [ ] Implement basic role-based access control
+- [ ] Use JWT in HTTP-only, Secure cookies at parent domain (e.g., .abclearning.com) for SSO between marketing (Next.js) and app (Vite React)
+- [ ] Implement /auth/status endpoint for lightweight authentication checks from the marketing site
 
 ## Phase 2: Basic Platform Development (Weeks 5-8)
 
 ### Frontend Framework
 
-- [ ] Set up React application structure
-- [ ] Create base UI components library
-- [ ] Implement responsive layouts
-- [ ] Design and implement navigation system
-- [ ] Set up state management (Redux/Context API)
+- [ ] Set up dual frontend applications:
+  - [ ] Next.js 15+ for marketing site with SSR
+  - [ ] Vite React for application interface
+- [ ] Create shared component library and design system
+- [ ] Implement responsive layouts across both applications 
+- [ ] Set up TypeScript with strict typing
+- [ ] Implement state management with Redux Toolkit
+- [ ] Set up CORS for cross-domain communication
+- [ ] Implement authentication state sharing between sites
 
 ### Terminal Integration
 

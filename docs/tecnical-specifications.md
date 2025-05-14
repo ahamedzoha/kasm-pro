@@ -4,7 +4,9 @@
 
 The platform follows a microservices architecture with the following primary components:
 
-- **Frontend Application**: React-based SPA with WebSocket connections
+- **Frontend Applications**: 
+  - **Marketing Site**: Next.js-based SSR application for SEO-optimized public content
+  - **Application**: Vite React SPA with WebSocket connections for terminal functionality
 - **API Gateway**: Entry point for all API requests, handling routing and basic authentication
 - **Authentication Service**: Manages user authentication and authorization
 - **Environment Manager**: Orchestrates the creation and management of virtual environments
@@ -33,7 +35,7 @@ The platform follows a microservices architecture with the following primary com
 
 ### 2.1 Technologies
 
-- **Framework**: React 18+
+- **Framework**: React 18+ (Vite for app, Next.js for marketing site with SSR/SEO)
 - **State Management**: Redux Toolkit with RTK Query
 - **Styling**: Tailwind CSS with custom components
 - **Terminal**: xterm.js 5.0+ with xterm-addon-fit
@@ -48,6 +50,8 @@ The platform follows a microservices architecture with the following primary com
 - **Code Editor**: Monaco editor for file editing
 - **Course Navigation**: Hierarchical course structure browser
 - **User Dashboard**: Progress overview and course access
+- **Marketing Site (Next.js)**: Uses SSR for SEO, checks `/api/auth/status` on load to show "Go to App" if user is logged in (cookie-based SSO)
+- **App (Vite React)**: Handles main application, uses cookie-based JWT for authentication
 
 ### 2.3 Performance Requirements
 
@@ -77,6 +81,10 @@ The platform follows a microservices architecture with the following primary com
   - OAuth (Google, GitHub)
   - SSO via SAML 2.0
 - **Session Management**: JWT with 1-hour expiry, refresh tokens
+- **Cookie-Based Auth**: JWT is set in an HTTP-only, Secure cookie at the parent domain (e.g., `.abclearning.com`) to enable SSO between marketing (Next.js) and app (Vite React) subdomains. Cookies use `SameSite=Lax`, `Secure`, and `httpOnly` flags.
+- **Auth Status Endpoint**: `/api/auth/status` endpoint returns `{ authenticated: true/false, username }` for lightweight auth checks from the marketing site. This endpoint reads the JWT from the cookie and validates it.
+- **CORS**: API allows credentials and origins from both `abclearning.com` and `app.abclearning.com`.
+- **Logout**: Properly clears the cookie across all subdomains.
 
 ### 3.3 Environment Manager
 
@@ -244,6 +252,8 @@ CREATE TABLE sessions (
 - **Rate Limiting**: 5 failed login attempts before temporary lockout
 - **Session Timeout**: 60 minutes of inactivity
 - **RBAC Implementation**: Role-based access with least privilege principle
+- **JWT in HTTP-only Cookies**: All authentication is managed via JWT tokens set in HTTP-only, Secure cookies at the parent domain for SSO across subdomains.
+- **CSRF Protection**: Use SameSite=Lax and CSRF tokens for state-changing requests.
 
 ### 6.2 Environment Security
 
@@ -271,10 +281,11 @@ CREATE TABLE sessions (
 
 ```
 POST   /api/auth/register           - Register new user
-POST   /api/auth/login              - Login user
+POST   /api/auth/login              - Login user (sets JWT cookie at .abclearning.com)
 POST   /api/auth/refresh            - Refresh access token
-POST   /api/auth/logout             - Logout user
+POST   /api/auth/logout             - Logout user (clears cookie)
 GET    /api/auth/me                 - Get current user info
+GET    /api/auth/status             - Lightweight auth status check (reads JWT from cookie)
 PUT    /api/auth/me                 - Update user info
 POST   /api/auth/password/reset     - Request password reset
 PUT    /api/auth/password           - Change password

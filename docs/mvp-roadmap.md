@@ -42,18 +42,18 @@ The Minimum Viable Product (MVP) represents the smallest possible version of the
 The MVP will use a simplified architecture while maintaining the core design principles:
 
 ```
-                  +----------------+
-                  |                |
-                  |   React SPA    |
-                  |                |
-                  +-------+--------+
-                          |
-                          v
-                  +-------+--------+
-                  |                |
-                  |   API Gateway  |
-                  |                |
-                  +-------+--------+
+                  +----------------+       +----------------+
+                  |                |       |                |
+                  | Next.js Site   |<----->|   Vite React   |
+                  | (Marketing)    |       |   (App)        |
+                  +-------+--------+       +-------+--------+
+                          |                       |
+                          v                       v
+                  +-------+------------------------+
+                  |                                |
+                  |          API Gateway           |
+                  |                                |
+                  +-------+------------------------+
                           |
          +----------------+-----------------+
          |                |                 |
@@ -75,11 +75,13 @@ The MVP will use a simplified architecture while maintaining the core design pri
 
 ### MVP Tech Stack
 
-- **Frontend**: React with xterm.js
+- **Frontend**: 
+  - Next.js 15+ for marketing/SEO site (SSR, public content)
+  - Vite React 18+ for application with xterm.js
 - **Backend**: Node.js with Express
 - **Databases**: PostgreSQL (users), MongoDB (content)
 - **Environment**: Docker containers on a single Kubernetes cluster
-- **Authentication**: JWT-based authentication
+- **Authentication**: JWT-based authentication using HTTP-only, Secure cookies at parent domain (.abclearning.com) for SSO between marketing and app
 - **Infrastructure**: Single cloud region deployment
 
 ## MVP Development Roadmap
@@ -91,11 +93,15 @@ The MVP will use a simplified architecture while maintaining the core design pri
 - Define API contracts between services
 - Set up basic CI/CD pipeline
 - Implement initial database schemas
+- Initialize Next.js marketing site and Vite React app projects
 
 ### Week 3-4: Core Authentication & UI Framework
 
 - Implement user registration and login flows
-- Create basic dashboard UI
+- Set up JWT authentication with HTTP-only cookies at parent domain
+- Implement /auth/status endpoint for SSO detection between sites
+- Create basic dashboard UI for application
+- Set up marketing site with authentication status awareness
 - Set up routing and navigation
 - Create initial design system and components
 - Implement API gateway with basic routing

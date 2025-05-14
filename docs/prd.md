@@ -29,6 +29,8 @@ Create an interactive, browser-based learning platform that provides users with 
 - Support email/password registration
 - Enable social login (Google, GitHub, etc.)
 - Implement secure authentication with JWT tokens
+- Use HTTP-only, Secure cookies set at the parent domain (e.g., .abclearning.com) for JWT to enable SSO between marketing (Next.js) and app (Vite React) subdomains
+- Provide /auth/status endpoint for lightweight authentication checks from the marketing site
 - Support password reset functionality
 - Provide user profile management
 
@@ -192,11 +194,13 @@ Create an interactive, browser-based learning platform that provides users with 
 
 ### 3.1.1 Frontend
 
-- React-based SPA with responsive design
-- xterm.js for terminal emulation
-- WebSocket connections for real-time communication
+- Split frontend architecture:
+  - Next.js 15+ for marketing site with SSR for SEO optimization
+  - Vite React 18+ SPA for the application interface
+- WebSocket connections for real-time communication with terminal
 - Local state management with Redux or Context API
 - Optimized bundle size for fast loading
+- Shared design system between marketing site and application
 
 ### 3.1.2 Backend Services
 
@@ -232,6 +236,8 @@ Create an interactive, browser-based learning platform that provides users with 
 - Rate limiting for authentication attempts
 - Session timeout controls
 - XSS and CSRF protection
+- JWT in HTTP-only, Secure cookies at parent domain for SSO across subdomains
+- /auth/status endpoint for lightweight auth checks
 
 ### 3.2.2 Environment Security
 

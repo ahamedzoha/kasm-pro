@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # KASM-Pro: Browser-Based Learning Platform
@@ -12,20 +12,24 @@ This platform provides browser-based virtual environments for learning technical
 
 ### Frontend Architecture
 - Use React 18+ with functional components and hooks
-- Implement Redux Toolkit with RTK Query for state management
-- Use Tailwind CSS for styling with custom components
-- Integrate xterm.js for terminal emulation
-- Implement WebSocket connections via Socket.IO
-- Create responsive layouts with mobile support
+- Split frontend into two applications:
+  - Next.js 15+ for marketing site with SSR for SEO
+  - Vite React for the application interface
+- Implement TypeScript throughout with strict type checking
+- Use Redux Toolkit for complex state management
+- Build responsive UI with Tailwind CSS
+- Implement xterm.js for terminal emulation
+- Create shared component library between marketing and app
 
 ### Backend Architecture
 - Follow microservices pattern with clear service boundaries
 - Structure API gateway as entry point for all requests
-- Implement JWT-based authentication
+- Implement JWT-based authentication (use HTTP-only, Secure cookies at the parent domain, e.g., .abclearning.com, for SSO between marketing (Next.js) and app (Vite React))
 - Use environment manager service for container orchestration
 - Create challenge service for content and validation
 - Develop terminal service for WebSocket connections
 - Support RESTful and WebSocket communication
+- Provide /auth/status endpoint for lightweight authentication checks from the marketing site
 
 ### Database Design
 - Store user data in PostgreSQL with normalized schema
