@@ -1,0 +1,84 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Terminal Implementation Guidelines
+
+## Terminal Component Architecture
+
+### Core Terminal Component
+- Use xterm.js 5.0+ as the terminal emulation library
+- Implement xterm-addon-fit for proper terminal resizing
+- Create a WebSocket connection for real-time terminal interaction
+- Support bidirectional communication with terminal sessions
+- Implement terminal session management
+
+### Terminal Features
+- Support for multiple terminal tabs or instances
+- Command history with up/down arrow navigation
+- Tab completion for common commands
+- Copy/paste functionality with keyboard shortcuts
+- Terminal resizing based on container size
+
+### WebSocket Connection
+- Use Socket.IO for WebSocket connections
+- Implement reconnection logic for dropped connections
+- Buffer input/output during connection interruptions
+- Support binary data transmission for terminal output
+- Maintain connection heartbeat to detect disconnections
+
+## Terminal Backend Service
+
+### Session Management
+- Create unique session IDs for each terminal instance
+- Associate sessions with user authentication
+- Implement session timeout and cleanup
+- Support resuming sessions after temporary disconnection
+- Track active sessions and resource usage
+
+### Container Integration
+- Connect terminal session to appropriate container environment
+- Support shell access to containers via exec
+- Forward terminal input/output streams
+- Handle terminal resize events
+- Support terminal signals (CTRL+C, CTRL+D, etc.)
+
+### Security Considerations
+- Restrict shell access based on user permissions
+- Sanitize input to prevent command injection
+- Implement rate limiting for terminal commands
+- Log terminal sessions for security auditing
+- Restrict network access from terminal environments
+
+## Performance Optimization
+
+### Latency Minimization
+- Target <100ms round-trip latency for terminal input
+- Implement local echo for immediate feedback
+- Optimize WebSocket frame size and frequency
+- Use binary WebSocket frames when possible
+- Minimize DOM operations in terminal rendering
+
+### Resource Management
+- Limit terminal output buffer size to prevent memory issues
+- Implement throttling for high-volume output
+- Clean up resources when terminal sessions are closed
+- Support graceful degradation under high load
+- Optimize terminal rendering for performance
+
+## User Experience
+
+### Terminal UI/UX
+- Provide clear visual indication of active terminal
+- Implement familiar terminal color schemes
+- Support customizable font size and family
+- Include terminal focus indicators
+- Add connection status indicators
+
+### Error Handling
+- Provide clear error messages for connection issues
+- Implement auto-reconnect with backoff strategy
+- Display notification for disconnected sessions
+- Support manual session refresh
+- Preserve command history during reconnection

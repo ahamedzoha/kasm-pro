@@ -1,0 +1,97 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Challenge System Implementation Guidelines
+
+## Challenge Data Model
+
+### Challenge Structure
+- Organize content into courses, modules, and challenges
+- Create structured challenge data model in MongoDB
+- Support different challenge types:
+  * Guided Labs: Step-by-step instructions with validation
+  * Open Challenges: Problem statements with end-state validation
+  * Quizzes: Multiple-choice or fill-in-the-blank questions
+  * Projects: Extended exercises with multiple validation points
+- Include metadata like difficulty, estimated time, points
+- Associate challenges with specific environment templates
+
+### Content Organization
+- Store challenge content in Markdown format
+- Support rich content with images, code blocks, and diagrams
+- Implement versioning for challenge content
+- Enable prerequisite relationships between challenges
+- Support custom learning paths
+
+## Validation System
+
+### Validation Methods
+- Command output validation: Check command output against expected results
+- File content validation: Verify file contents match expected state
+- Service state validation: Check if services are running correctly
+- Infrastructure validation: Verify resource configurations
+- Health checks validation: Ensure applications respond correctly
+
+### Validation Implementation
+- Develop validation engine in Python with FastAPI
+- Create validation script executor
+- Support custom validation logic via scripts
+- Implement real-time validation feedback
+- Support partial completion and progress tracking
+
+### Feedback Mechanisms
+- Provide immediate feedback on task completion
+- Implement hint system for failed validations
+- Support multi-level hints (basic → detailed)
+- Create progress indicators for multi-step challenges
+- Allow solution reveal option (with instructor permission)
+
+## Progress Tracking
+
+### User Progress
+- Track completion status for each challenge
+- Record time spent on challenges
+- Calculate scores based on completion and time
+- Support achievement badges for milestones
+- Generate learning analytics and reports
+
+### Analytics
+- Analyze common failure points
+- Track completion rates for challenges
+- Identify skill gaps based on challenge performance
+- Generate instructor dashboards with student progress
+- Support comparative statistics with peer groups
+
+## Content Authoring
+
+### Authoring Tools
+- Create web-based challenge creation interface
+- Support Markdown editor for instructions
+- Implement environment template selection
+- Provide validation script creation tools
+- Enable content preview and testing
+
+### Content Management
+- Implement approval workflow for new content
+- Support draft and published states
+- Enable content categorization and tagging
+- Create content search and discovery features
+- Support content import/export functionality
+
+## User Experience
+
+### Challenge Interface
+- Implement split-pane view (instructions + terminal)
+- Create collapsible sections for better space utilization
+- Support dark/light mode toggle
+- Ensure responsive design for different screen sizes
+- Include progress indicator and navigation controls
+
+### Accessibility
+- Ensure content is screen-reader friendly
+- Support keyboard navigation for all features
+- Implement proper ARIA attributes
+- Provide text alternatives for images
+- Test with accessibility evaluation tools

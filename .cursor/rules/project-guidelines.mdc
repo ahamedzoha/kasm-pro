@@ -1,0 +1,87 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# KASM-Pro: Browser-Based Learning Platform
+
+## Project Overview
+This platform provides browser-based virtual environments for learning technical skills like Kubernetes, Docker, and cloud infrastructure through guided challenges, terminal interaction, and automated validation.
+
+## Architecture Guidelines
+
+### Frontend Architecture
+- Use React 18+ with functional components and hooks
+- Implement Redux Toolkit with RTK Query for state management
+- Use Tailwind CSS for styling with custom components
+- Integrate xterm.js for terminal emulation
+- Implement WebSocket connections via Socket.IO
+- Create responsive layouts with mobile support
+
+### Backend Architecture
+- Follow microservices pattern with clear service boundaries
+- Structure API gateway as entry point for all requests
+- Implement JWT-based authentication
+- Use environment manager service for container orchestration
+- Create challenge service for content and validation
+- Develop terminal service for WebSocket connections
+- Support RESTful and WebSocket communication
+
+### Database Design
+- Store user data in PostgreSQL with normalized schema
+- Use MongoDB for course content with flexible document structure
+- Implement Redis for session management and caching
+- Follow proper indexing and query optimization strategies
+
+## Coding Standards
+
+### General
+- Use clear, descriptive variable and function names
+- Follow DRY (Don't Repeat Yourself) principles
+- Implement proper error handling and logging
+- Write unit tests for core functionality
+- Document public methods and complex logic
+
+### Frontend
+- Use TypeScript with strict mode
+- Create reusable, atomic components
+- Follow container/presenter pattern
+- Implement proper state management patterns
+- Use CSS modules or styled-components for component styling
+
+### Backend
+- Document API endpoints with OpenAPI/Swagger
+- Implement proper validation for all inputs
+- Use environment variables for configuration
+- Follow RESTful naming conventions
+- Implement proper security headers and CORS
+
+## Key Features Implementation
+
+### Terminal Environment
+- Implement full terminal emulation with proper escape sequences
+- Support multiple simultaneous sessions
+- Ensure <100ms input latency
+- Implement command history and autocomplete
+- Support file system operations
+
+### Challenge System
+- Create structured challenge data model
+- Implement step-by-step validation
+- Support different challenge types (guided, open)
+- Provide hints and feedback mechanisms
+- Track user progress and metrics
+
+### Environment Management
+- Support different environment templates
+- Implement resource quotas and limitations
+- Create environment provisioning workflow
+- Manage environment lifecycle and cleanup
+- Implement network isolation between environments
+
+## Performance Guidelines
+- Optimize initial load time (<2s on broadband)
+- Ensure terminal responsiveness (<100ms latency)
+- Implement proper API caching strategies
+- Optimize database queries for performance
+- Support horizontal scaling for all services

@@ -1,0 +1,51 @@
+# KASM-Pro: A Browser-Based Learning Platform for Technical Skills
+
+### Project Overview
+
+This platform provides browser-based virtual environments for learning technical skills like Kubernetes, Docker, and cloud infrastructure. It features guided challenges, interactive terminals, and automated validation.
+
+### Key Technologies
+
+- **Frontend**: React 18+, Redux Toolkit, Tailwind CSS, xterm.js for terminal emulation
+- **Backend**: Microservices architecture with Node.js, Go, Python, Java
+- **Infrastructure**: Kubernetes for orchestration, Docker containers for environments
+- **Database**: PostgreSQL for user data, MongoDB for course content, Redis for sessions
+
+### Coding Standards
+
+- Follow established patterns in existing files
+- Use TypeScript with strict typing for frontend and backend services
+- Implement modular architecture with clear separation of concerns
+- Adhere to RESTful principles for API endpoints
+- Follow PEP 8 for Python, AirBnB style for JavaScript
+- Write clean, maintainable code with appropriate comments
+- Prioritize security best practices for container environments
+
+### Key Features
+
+- Browser-based terminal environments
+- Challenge validation system
+- Course management and progress tracking
+- Environment provisioning and lifecycle management
+- User authentication and role-based access
+
+### Terminal Features
+
+- Full terminal emulation via xterm.js
+- WebSocket connections for real-time interaction
+- Multiple terminal tabs
+- File editing capabilities
+- Command history and autocompletion
+
+### Documentation Requirements
+
+- Document all public APIs with JSDoc or equivalent
+- Maintain technical specifications and implementation plans
+- Create user documentation for key features
+
+### Performance Requirements
+
+- Terminal latency < 100ms
+- API response time < 500ms
+- Environment provisioning < 30 seconds
+- Support for 500+ concurrent users

@@ -1,0 +1,92 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Environment Orchestration Guidelines
+
+## Environment Architecture
+
+### Environment Types
+- Single Docker container environments for basic challenges
+- Multi-container environments using Docker Compose
+- Kubernetes clusters with 1 control plane + n worker nodes
+- Cloud provider simulations for AWS, GCP, Azure
+- Custom environments for specialized scenarios
+
+### Orchestration Service
+- Develop environment manager service in Go for performance
+- Implement Kubernetes custom controller pattern
+- Create environment template system for quick provisioning
+- Support resource quotas and limitations
+- Implement cleanup automation for expired environments
+
+### Container Configuration
+- Base Docker images on Ubuntu 22.04 or Alpine Linux
+- Pre-install essential tools (bash, curl, vim, git)
+- Apply resource limits (CPU, memory, storage)
+- Implement non-root user execution
+- Use read-only file systems where possible
+
+## Provisioning Workflow
+
+### Environment Creation
+- Accept environment template specification
+- Validate resource availability and permissions
+- Create isolated namespace or network
+- Deploy containers or Kubernetes resources
+- Configure networking and service discovery
+- Provide access credentials or connection details
+
+### Environment Lifecycle
+- Implement time-based session limits (30-60 minutes)
+- Support session extension capabilities
+- Enable environment state persistence (optional)
+- Provide snapshot and restore functionality
+- Implement auto-scaling for resources based on usage
+
+### Resource Management
+- Apply CPU, memory, and storage limits
+- Implement fair resource allocation across users
+- Pre-warm common environment types for faster startup
+- Monitor resource usage and enforce limits
+- Clean up resources immediately after session expiration
+
+## Security Considerations
+
+### Network Isolation
+- Place each user environment in separate namespace/network
+- Implement strict network policies
+- Control ingress/egress traffic
+- Prevent cross-environment communication
+- Limit external network access
+
+### Container Security
+- Run containers with minimal privileges
+- Implement seccomp and AppArmor profiles
+- Apply SELinux or similar security contexts
+- Scan container images for vulnerabilities
+- Implement read-only file systems where possible
+
+### Access Control
+- Implement role-based access control (RBAC)
+- Create temporary credentials for environment access
+- Audit all access and operations
+- Implement timeout for idle sessions
+- Validate all user inputs for security risks
+
+## Monitoring and Maintenance
+
+### Environment Monitoring
+- Track health and state of all environments
+- Collect performance metrics
+- Implement logging for all operations
+- Set up alerts for resource exhaustion
+- Monitor network traffic and unusual patterns
+
+### Maintenance Operations
+- Schedule regular cleanup of expired environments
+- Update base images and templates
+- Apply security patches
+- Perform health checks and self-healing
+- Scale infrastructure based on demand
