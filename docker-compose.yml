@@ -1,0 +1,163 @@
+version: '3.8'
+
+services:
+  # Database services
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: kasm
+      POSTGRES_PASSWORD: kasm
+      POSTGRES_DB: kasm
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kasm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    image: mongo:7.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: kasm
+      MONGO_INITDB_ROOT_PASSWORD: kasm
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend services
+  auth-service:
+    build:
+      context: .
+      dockerfile: apps/auth-service/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://kasm:kasm@postgres:5432/kasm
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  environment-service:
+    build:
+      context: .
+      dockerfile: apps/environment-service/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://kasm:kasm@postgres:5432/kasm
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  challenge-service:
+    build:
+      context: .
+      dockerfile: apps/challenge-service/Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      - MONGODB_URI=mongodb://kasm:kasm@mongodb:27017/kasm?authSource=admin
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  progress-service:
+    build:
+      context: .
+      dockerfile: apps/progress-service/Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      - DATABASE_URL=postgresql://kasm:kasm@postgres:5432/kasm
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  terminal-service:
+    build:
+      context: .
+      dockerfile: apps/terminal-service/Dockerfile
+    ports:
+      - "3004:3004"
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # Frontend applications
+  app:
+    build:
+      context: .
+      dockerfile: apps/app/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - auth-service
+      - terminal-service
+
+  marketing:
+    build:
+      context: .
+      dockerfile: apps/marketing/Dockerfile
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=production
+
+  # API Gateway
+  gateway:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/gateway/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - auth-service
+      - environment-service
+      - challenge-service
+      - progress-service
+      - terminal-service
+
+volumes:
+  postgres-data:
+  mongo-data:
+  redis-data: 

@@ -22,7 +22,12 @@ kasm-pro/
 │   ├── environment-service/    # NestJS 10 environment orchestration
 │   ├── challenge-service/      # NestJS 10 challenge validation
 │   ├── progress-service/       # NestJS 10 user progress tracking
-│   └── terminal-service/       # NestJS 10 terminal WebSocket service
+│   ├── terminal-service/       # NestJS 10 terminal WebSocket service
+│   ├── auth-service-e2e/       # End-to-end tests for auth service
+│   ├── environment-service-e2e/ # End-to-end tests for environment service
+│   ├── challenge-service-e2e/  # End-to-end tests for challenge service
+│   ├── progress-service-e2e/   # End-to-end tests for progress service
+│   └── terminal-service-e2e/   # End-to-end tests for terminal service
 ├── libs/                       # Shared libraries
 │   ├── api-interfaces/         # Shared API interfaces
 │   ├── ui/                     # Shared UI components
@@ -32,6 +37,7 @@ kasm-pro/
 ├── tools/                      # Build scripts and tooling
 ├── docker/                     # Docker-related configuration
 │   ├── environments/           # Environment templates
+│   ├── gateway/                # API Gateway (Nginx) configuration
 │   └── development/            # Local development setup
 ├── docs/                       # Project documentation
 ├── nx.json                     # NX configuration
@@ -57,6 +63,22 @@ kasm-pro/
   - Docker for containerization
   - Kubernetes for orchestration
   - GitHub Actions for CI/CD
+  - Nginx for API Gateway
+
+## Service Ports
+
+| Service | Development Port | Docker Port | Description |
+|---------|------------------|-------------|-------------|
+| Marketing Site | 3005 | 3005 | Next.js marketing website |
+| Application | 4200 (dev), 80 (Docker) | 80 | React SPA application interface |
+| API Gateway | N/A | 8080 | API gateway for backend services |
+| Auth Service | 3000 | 3000 | Authentication service |
+| Environment Service | 3001 | 3001 | Environment orchestration |
+| Challenge Service | 3002 | 3002 | Challenge validation |
+| Progress Service | 3003 | 3003 | User progress tracking |
+| Terminal Service | 3004 | 3004 | Terminal WebSocket service |
+| UI Library | 5173/5174 | N/A | Component library (dev only) |
+| Terminal Library | 5173/5174 | N/A | Terminal components (dev only) |
 
 ## Initial Setup Steps
 
@@ -77,36 +99,36 @@ npm install -D @nx/next @nx/react @nx/vite @nx/nest @nx/node @nx/js
 
 ```bash
 # Marketing site (Next.js)
-nx g @nx/next:application marketing --directory=apps/marketing
+nx g @nx/next:app marketing --directory=apps/marketing
 
 # Application (Vite React)
-nx g @nx/react:application app --directory=apps/app --bundler=vite
+nx g @nx/react:app app --directory=apps/app --bundler=vite
 
 # Backend services (NestJS)
-nx g @nx/nest:application auth-service --directory=apps/auth-service
-nx g @nx/nest:application environment-service --directory=apps/environment-service
-nx g @nx/nest:application challenge-service --directory=apps/challenge-service
-nx g @nx/nest:application progress-service --directory=apps/progress-service
-nx g @nx/nest:application terminal-service --directory=apps/terminal-service
+nx g @nx/nest:app auth-service
+nx g @nx/nest:app environment-service
+nx g @nx/nest:app challenge-service
+nx g @nx/nest:app progress-service
+nx g @nx/nest:app terminal-service
 ```
 
 ### 3. Generate Shared Libraries
 
 ```bash
 # API interfaces
-nx g @nx/js:library api-interfaces --directory=libs/api-interfaces --buildable
+nx g @nx/js:library api-interfaces --directory=libs/api-interfaces --bundler=tsc
 
 # UI components
-nx g @nx/react:library ui --directory=libs/ui --buildable
+nx g @nx/react:library ui --directory=libs/ui --bundler=vite
 
 # Terminal components
-nx g @nx/react:library terminal --directory=libs/terminal --buildable
+nx g @nx/react:library terminal --directory=libs/terminal --bundler=vite
 
 # Validation library
-nx g @nx/js:library validation --directory=libs/validation --buildable
+nx g @nx/js:library validation --directory=libs/validation --bundler=esbuild
 
 # Utilities
-nx g @nx/js:library util --directory=libs/util --buildable
+nx g @nx/js:library util --directory=libs/util --bundler=esbuild
 ```
 
 ## Docker Setup
@@ -156,6 +178,7 @@ Create a `docker-compose.yml` file for local development that includes all servi
 version: '3.8'
 
 services:
+  # Database services
   postgres:
     image: postgres:16-alpine
     environment:
@@ -166,6 +189,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kasm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mongodb:
     image: mongo:7.0
@@ -176,6 +204,11 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7-alpine
@@ -183,11 +216,204 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend services
+  auth-service:
+    build:
+      context: .
+      dockerfile: apps/auth-service/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://kasm:kasm@postgres:5432/kasm
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  environment-service:
+    build:
+      context: .
+      dockerfile: apps/environment-service/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://kasm:kasm@postgres:5432/kasm
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  challenge-service:
+    build:
+      context: .
+      dockerfile: apps/challenge-service/Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      - MONGODB_URI=mongodb://kasm:kasm@mongodb:27017/kasm?authSource=admin
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  progress-service:
+    build:
+      context: .
+      dockerfile: apps/progress-service/Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      - DATABASE_URL=postgresql://kasm:kasm@postgres:5432/kasm
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  terminal-service:
+    build:
+      context: .
+      dockerfile: apps/terminal-service/Dockerfile
+    ports:
+      - "3004:3004"
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # Frontend applications
+  app:
+    build:
+      context: .
+      dockerfile: apps/app/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - gateway
+
+  marketing:
+    build:
+      context: .
+      dockerfile: apps/marketing/Dockerfile
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=production
+
+  # API Gateway
+  gateway:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/gateway/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - auth-service
+      - environment-service
+      - challenge-service
+      - progress-service
+      - terminal-service
 
 volumes:
   postgres-data:
   mongo-data:
   redis-data:
+```
+
+### API Gateway Configuration
+
+Create `docker/gateway/nginx.conf` for API routing:
+
+```nginx
+server {
+    listen 80;
+    server_name _;
+
+    # Enable compression
+    gzip on;
+    gzip_comp_level 6;
+    gzip_min_length 100;
+    gzip_types text/plain text/css application/javascript application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+    # Authentication service
+    location /api/auth/ {
+        proxy_pass http://auth-service:3000/api/auth/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Environment service
+    location /api/environments/ {
+        proxy_pass http://environment-service:3001/api/environments/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Challenge service
+    location /api/challenges/ {
+        proxy_pass http://challenge-service:3002/api/challenges/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Progress service
+    location /api/progress/ {
+        proxy_pass http://progress-service:3003/api/progress/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Terminal service (WebSocket)
+    location /terminal/ {
+        proxy_pass http://terminal-service:3004/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Content-Type-Options "nosniff";
+    
+    # Default response for any other requests
+    location / {
+        return 404;
+    }
+}
 ```
 
 ## CI/CD Pipeline with GitHub Actions
@@ -400,10 +626,32 @@ Add these scripts to `package.json`:
     "affected:apps": "nx affected:apps",
     "affected:build": "nx affected:build",
     "affected:test": "nx affected:test",
-    "graph": "nx graph"
+    "graph": "nx graph",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up",
+    "docker:down": "docker-compose down",
+    "docker:deps": "docker-compose up postgres mongodb redis",
+    "docker:db:reset": "docker-compose down -v && docker-compose up -d postgres mongodb redis",
+    "docker:logs": "docker-compose logs -f"
   }
 }
 ```
+
+### Development Workflow
+
+The recommended development workflow is:
+
+1. Start database dependencies with Docker:
+   ```bash
+   npm run docker:deps
+   ```
+
+2. Start the NX development services:
+   ```bash
+   npm run start:dev
+   ```
+
+This approach provides hot reloading for all services while maintaining database access.
 
 ### VS Code Configuration
 
@@ -523,10 +771,18 @@ npx nx graph
 
 ## Next Steps
 
-After initial setup:
+After setting up the project:
 
 1. Configure shared authentication between marketing site and application
-2. Set up the terminal component with xterm.js
-3. Implement environment orchestration with Kubernetes
-4. Create challenge validation system
-5. Implement database integration with TypeORM/Prisma 
+2. Implement environment orchestration with Kubernetes
+3. Create challenge validation system
+4. Implement database integration with TypeORM/Prisma
+5. Design UI components for the terminal interface
+
+## Documentation
+
+Refer to the following documentation files for more details:
+
+- `docs/docker-usage.md` - Detailed guide for Docker setup and usage
+- `docs/kubernetes-setup.md` - Kubernetes deployment configuration
+- `docs/development-workflow.md` - Development process and guidelines 
