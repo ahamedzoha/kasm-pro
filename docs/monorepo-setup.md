@@ -175,8 +175,6 @@ CMD ["node", "main.js"]
 Create a `docker-compose.yml` file for local development that includes all services and dependencies:
 
 ```yaml
-version: '3.8'
-
 services:
   # Database services
   postgres:

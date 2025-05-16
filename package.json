@@ -9,7 +9,7 @@
     "docker:deps": "docker compose up postgres mongodb redis",
     "docker:db:reset": "docker compose down -v && docker compose up -d postgres mongodb redis",
     "docker:logs": "docker compose logs -f",
-    "start:dev": "nx run-many --target=serve --all --parallel",
+    "start:dev": "nx run-many --target=serve,dev --all --parallel",
     "start:marketing": "nx serve marketing",
     "start:app": "nx serve app",
     "start:services": "nx run-many --target=serve --projects=auth-service,environment-service,challenge-service,progress-service,terminal-service --parallel",
