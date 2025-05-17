@@ -75,7 +75,7 @@ The MVP will use a simplified architecture while maintaining the core design pri
 
 ### MVP Tech Stack
 
-- **Frontend**: 
+- **Frontend**:
   - Next.js 15.3.2 for marketing/SEO site (SSR, public content)
   - Vite React 19.1 for application with xterm.js
 - **Backend**: NestJS 10 microservices

@@ -563,46 +563,46 @@ Update `nx.json`:
 
 ```json
 {
-  "extends": "nx/presets/npm.json",
-  "affected": {
-    "defaultBase": "main"
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
-      }
-    }
-  },
-  "targetDefaults": {
-    "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
-    },
-    "test": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
-    },
-    "lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
-    }
-  },
-  "generators": {
-    "@nx/react": {
-      "application": {
-        "style": "css",
-        "linter": "eslint",
-        "babel": true
-      },
-      "component": {
-        "style": "css"
-      },
-      "library": {
-        "style": "css",
-        "linter": "eslint"
-      }
-    }
-  }
+	"extends": "nx/presets/npm.json",
+	"affected": {
+		"defaultBase": "main"
+	},
+	"tasksRunnerOptions": {
+		"default": {
+			"runner": "nx/tasks-runners/default",
+			"options": {
+				"cacheableOperations": ["build", "lint", "test", "e2e"]
+			}
+		}
+	},
+	"targetDefaults": {
+		"build": {
+			"dependsOn": ["^build"],
+			"inputs": ["production", "^production"]
+		},
+		"test": {
+			"inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+		},
+		"lint": {
+			"inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+		}
+	},
+	"generators": {
+		"@nx/react": {
+			"application": {
+				"style": "css",
+				"linter": "eslint",
+				"babel": true
+			},
+			"component": {
+				"style": "css"
+			},
+			"library": {
+				"style": "css",
+				"linter": "eslint"
+			}
+		}
+	}
 }
 ```
 
@@ -612,26 +612,26 @@ Add these scripts to `package.json`:
 
 ```json
 {
-  "scripts": {
-    "start:dev": "nx run-many --target=serve --all --parallel",
-    "start:marketing": "nx serve marketing",
-    "start:app": "nx serve app",
-    "start:services": "nx run-many --target=serve --projects=auth-service,environment-service,challenge-service,progress-service,terminal-service --parallel",
-    "start:deps": "docker-compose up",
-    "build:all": "nx run-many --target=build --all",
-    "test:all": "nx run-many --target=test --all",
-    "lint:all": "nx run-many --target=lint --all",
-    "affected:apps": "nx affected:apps",
-    "affected:build": "nx affected:build",
-    "affected:test": "nx affected:test",
-    "graph": "nx graph",
-    "docker:build": "docker-compose build",
-    "docker:up": "docker-compose up",
-    "docker:down": "docker-compose down",
-    "docker:deps": "docker-compose up postgres mongodb redis",
-    "docker:db:reset": "docker-compose down -v && docker-compose up -d postgres mongodb redis",
-    "docker:logs": "docker-compose logs -f"
-  }
+	"scripts": {
+		"start:dev": "nx run-many --target=serve --all --parallel",
+		"start:marketing": "nx serve marketing",
+		"start:app": "nx serve app",
+		"start:services": "nx run-many --target=serve --projects=auth-service,environment-service,challenge-service,progress-service,terminal-service --parallel",
+		"start:deps": "docker-compose up",
+		"build:all": "nx run-many --target=build --all",
+		"test:all": "nx run-many --target=test --all",
+		"lint:all": "nx run-many --target=lint --all",
+		"affected:apps": "nx affected:apps",
+		"affected:build": "nx affected:build",
+		"affected:test": "nx affected:test",
+		"graph": "nx graph",
+		"docker:build": "docker-compose build",
+		"docker:up": "docker-compose up",
+		"docker:down": "docker-compose down",
+		"docker:deps": "docker-compose up postgres mongodb redis",
+		"docker:db:reset": "docker-compose down -v && docker-compose up -d postgres mongodb redis",
+		"docker:logs": "docker-compose logs -f"
+	}
 }
 ```
 
@@ -658,14 +658,14 @@ Create `.vscode/extensions.json`:
 
 ```json
 {
-  "recommendations": [
-    "nrwl.angular-console",
-    "esbenp.prettier-vscode",
-    "dbaeumer.vscode-eslint",
-    "ms-azuretools.vscode-docker",
-    "mikestead.dotenv",
-    "humao.rest-client"
-  ]
+	"recommendations": [
+		"nrwl.angular-console",
+		"esbenp.prettier-vscode",
+		"dbaeumer.vscode-eslint",
+		"ms-azuretools.vscode-docker",
+		"mikestead.dotenv",
+		"humao.rest-client"
+	]
 }
 ```
 
@@ -673,18 +673,13 @@ Create `.vscode/settings.json`:
 
 ```json
 {
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact"
-  ],
-  "typescript.tsdk": "node_modules/typescript/lib"
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": true
+	},
+	"eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+	"typescript.tsdk": "node_modules/typescript/lib"
 }
 ```
 
@@ -696,35 +691,35 @@ For strict type safety across the monorepo:
 
 ```json
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "rootDir": ".",
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "es2020",
-    "module": "esnext",
-    "lib": ["es2020", "dom"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "strictNullChecks": true,
-    "baseUrl": ".",
-    "paths": {
-      "@kasm-pro/api-interfaces": ["libs/api-interfaces/src/index.ts"],
-      "@kasm-pro/ui": ["libs/ui/src/index.ts"],
-      "@kasm-pro/terminal": ["libs/terminal/src/index.ts"],
-      "@kasm-pro/validation": ["libs/validation/src/index.ts"],
-      "@kasm-pro/util": ["libs/util/src/index.ts"]
-    }
-  },
-  "exclude": ["node_modules", "tmp"]
+	"compileOnSave": false,
+	"compilerOptions": {
+		"rootDir": ".",
+		"sourceMap": true,
+		"declaration": false,
+		"moduleResolution": "node",
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"importHelpers": true,
+		"target": "es2020",
+		"module": "esnext",
+		"lib": ["es2020", "dom"],
+		"skipLibCheck": true,
+		"skipDefaultLibCheck": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"strictNullChecks": true,
+		"baseUrl": ".",
+		"paths": {
+			"@kasm-pro/api-interfaces": ["libs/api-interfaces/src/index.ts"],
+			"@kasm-pro/ui": ["libs/ui/src/index.ts"],
+			"@kasm-pro/terminal": ["libs/terminal/src/index.ts"],
+			"@kasm-pro/validation": ["libs/validation/src/index.ts"],
+			"@kasm-pro/util": ["libs/util/src/index.ts"]
+		}
+	},
+	"exclude": ["node_modules", "tmp"]
 }
 ```
 
@@ -738,25 +733,25 @@ Create `.eslintrc.json` at the root:
 
 ```json
 {
-  "root": true,
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking"
-  ],
-  "plugins": ["@typescript-eslint"],
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "project": "./tsconfig.base.json"
-  },
-  "rules": {
-    "@typescript-eslint/explicit-module-boundary-types": "error",
-    "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-unsafe-assignment": "error",
-    "@typescript-eslint/no-unsafe-call": "error",
-    "@typescript-eslint/no-unsafe-member-access": "error",
-    "@typescript-eslint/no-unsafe-return": "error"
-  }
+	"root": true,
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:@typescript-eslint/recommended-requiring-type-checking"
+	],
+	"plugins": ["@typescript-eslint"],
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"project": "./tsconfig.base.json"
+	},
+	"rules": {
+		"@typescript-eslint/explicit-module-boundary-types": "error",
+		"@typescript-eslint/no-explicit-any": "error",
+		"@typescript-eslint/no-unsafe-assignment": "error",
+		"@typescript-eslint/no-unsafe-call": "error",
+		"@typescript-eslint/no-unsafe-member-access": "error",
+		"@typescript-eslint/no-unsafe-return": "error"
+	}
 }
 ```
 

@@ -3,3 +3,25 @@
 /coverage
 /.nx/cache
 /.nx/workspace-data
+
+# Generated files
+dist/
+.next/
+node_modules/
+coverage/
+build/
+
+# Lock files
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Next.js specific
+.next/
+out/
+
+# Other
+*.min.*
+*.log
+.*
+*.d.ts

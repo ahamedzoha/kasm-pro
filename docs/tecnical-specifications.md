@@ -4,7 +4,7 @@
 
 The platform follows a microservices architecture with the following primary components:
 
-- **Frontend Applications**: 
+- **Frontend Applications**:
   - **Marketing Site**: Next.js-based SSR application for SEO-optimized public content
   - **Application**: Vite React SPA with WebSocket connections for terminal functionality
 - **API Gateway**: Entry point for all API requests, handling routing and basic authentication

@@ -1,3 +1,3 @@
 export function validation(): string {
-  return 'validation';
+	return "validation";
 }

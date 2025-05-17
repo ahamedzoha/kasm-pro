@@ -1,7 +1,7 @@
-import { util } from './util.js';
+import { util } from "./util.js";
 
-describe('util', () => {
-  it('should work', () => {
-    expect(util()).toEqual('util');
-  });
+describe("util", () => {
+	it("should work", () => {
+		expect(util()).toEqual("util");
+	});
 });

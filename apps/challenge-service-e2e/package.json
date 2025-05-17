@@ -1,26 +1,26 @@
 {
-  "name": "@kasm-pro/challenge-service-e2e",
-  "version": "0.0.1",
-  "private": true,
-  "nx": {
-    "implicitDependencies": [
-      "@kasm-pro/challenge-service"
-    ],
-    "targets": {
-      "e2e": {
-        "executor": "@nx/jest:jest",
-        "outputs": [
-          "{projectRoot}/test-output/jest/coverage"
-        ],
-        "options": {
-          "jestConfig": "apps/challenge-service-e2e/jest.config.ts",
-          "passWithNoTests": true
-        },
-        "dependsOn": [
-          "@kasm-pro/challenge-service:build",
-          "@kasm-pro/challenge-service:serve"
-        ]
-      }
-    }
-  }
+	"name": "@kasm-pro/challenge-service-e2e",
+	"version": "0.0.1",
+	"private": true,
+	"nx": {
+		"implicitDependencies": [
+			"@kasm-pro/challenge-service"
+		],
+		"targets": {
+			"e2e": {
+				"executor": "@nx/jest:jest",
+				"outputs": [
+					"{projectRoot}/test-output/jest/coverage"
+				],
+				"options": {
+					"jestConfig": "apps/challenge-service-e2e/jest.config.ts",
+					"passWithNoTests": true
+				},
+				"dependsOn": [
+					"@kasm-pro/challenge-service:build",
+					"@kasm-pro/challenge-service:serve"
+				]
+			}
+		}
+	}
 }

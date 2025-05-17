@@ -34,7 +34,7 @@
   - [ ] Next.js 15.3.2 for marketing site with SSR
   - [ ] Vite React 19.1 for application interface
 - [ ] Create shared component library and design system
-- [ ] Implement responsive layouts across both applications 
+- [ ] Implement responsive layouts across both applications
 - [ ] Set up TypeScript with strict typing
 - [ ] Implement state management with Redux Toolkit
 - [ ] Set up CORS for cross-domain communication
