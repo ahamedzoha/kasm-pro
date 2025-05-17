@@ -7,7 +7,7 @@ export function App() {
 
   console.log(util)
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-black text-white">
+    <div className="flex flex-col items-center justify-center h-screen">
       <Button>Click me</Button>
       <Routes>
         <Route
