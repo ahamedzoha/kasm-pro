@@ -1,4 +1,4 @@
-import { Text, Ui } from "@kasm-pro/ui"
+import { Button, Text, Ui } from "@kasm-pro/ui"
 
 export default function Index() {
   /*
@@ -10,6 +10,7 @@ export default function Index() {
     <div>
       <Ui />
       <Text>Hello</Text>
+      <Button>Click me</Button>
     </div>
   )
 }
