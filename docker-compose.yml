@@ -7,11 +7,11 @@ services:
       POSTGRES_PASSWORD: kasm
       POSTGRES_DB: kasm
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U kasm']
+      test: ["CMD-SHELL", "pg_isready -U kasm"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,7 +22,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: kasm
       MONGO_INITDB_ROOT_PASSWORD: kasm
     ports:
-      - '27017:27017'
+      - "27017:27017"
     volumes:
       - mongo-data:/data/db
     healthcheck:
@@ -34,11 +34,11 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - '6379:6379'
+      - "6379:6379"
     volumes:
       - redis-data:/data
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -49,7 +49,7 @@ services:
       context: .
       dockerfile: apps/auth-service/Dockerfile
     ports:
-      - '3000:3000'
+      - "3000:3000"
     environment:
       - DATABASE_URL=postgresql://kasm:kasm@postgres:5432/kasm
       - REDIS_URL=redis://redis:6379
@@ -65,7 +65,7 @@ services:
       context: .
       dockerfile: apps/environment-service/Dockerfile
     ports:
-      - '3001:3001'
+      - "3001:3001"
     environment:
       - DATABASE_URL=postgresql://kasm:kasm@postgres:5432/kasm
       - REDIS_URL=redis://redis:6379
@@ -81,7 +81,7 @@ services:
       context: .
       dockerfile: apps/challenge-service/Dockerfile
     ports:
-      - '3002:3002'
+      - "3002:3002"
     environment:
       - MONGODB_URI=mongodb://kasm:kasm@mongodb:27017/kasm?authSource=admin
       - REDIS_URL=redis://redis:6379
@@ -97,7 +97,7 @@ services:
       context: .
       dockerfile: apps/progress-service/Dockerfile
     ports:
-      - '3003:3003'
+      - "3003:3003"
     environment:
       - DATABASE_URL=postgresql://kasm:kasm@postgres:5432/kasm
       - REDIS_URL=redis://redis:6379
@@ -113,7 +113,7 @@ services:
       context: .
       dockerfile: apps/terminal-service/Dockerfile
     ports:
-      - '3004:3004'
+      - "3004:3004"
     environment:
       - REDIS_URL=redis://redis:6379
       - NODE_ENV=production
@@ -127,7 +127,7 @@ services:
       context: .
       dockerfile: apps/app/Dockerfile
     ports:
-      - '80:80'
+      - "80:80"
     depends_on:
       - auth-service
       - terminal-service
@@ -137,7 +137,7 @@ services:
       context: .
       dockerfile: apps/marketing/Dockerfile
     ports:
-      - '3005:3005'
+      - "4202:4202"
     environment:
       - NODE_ENV=production
 
@@ -145,7 +145,7 @@ services:
   gateway:
     image: nginx:alpine
     ports:
-      - '8080:80'
+      - "8080:80"
     volumes:
       - ./docker/gateway/nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:

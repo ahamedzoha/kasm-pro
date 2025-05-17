@@ -67,18 +67,18 @@ kasm-pro/
 
 ## Service Ports
 
-| Service | Development Port | Docker Port | Description |
-|---------|------------------|-------------|-------------|
-| Marketing Site | 3005 | 3005 | Next.js marketing website |
-| Application | 4200 (dev), 80 (Docker) | 80 | React SPA application interface |
-| API Gateway | N/A | 8080 | API gateway for backend services |
-| Auth Service | 3000 | 3000 | Authentication service |
-| Environment Service | 3001 | 3001 | Environment orchestration |
-| Challenge Service | 3002 | 3002 | Challenge validation |
-| Progress Service | 3003 | 3003 | User progress tracking |
-| Terminal Service | 3004 | 3004 | Terminal WebSocket service |
-| UI Library | 5173/5174 | N/A | Component library (dev only) |
-| Terminal Library | 5173/5174 | N/A | Terminal components (dev only) |
+| Service             | Development Port        | Docker Port | Description                      |
+| ------------------- | ----------------------- | ----------- | -------------------------------- |
+| Marketing Site      | 4202                    | 4202        | Next.js marketing website        |
+| Application         | 4200 (dev), 80 (Docker) | 80          | React SPA application interface  |
+| API Gateway         | N/A                     | 8080        | API gateway for backend services |
+| Auth Service        | 3000                    | 3000        | Authentication service           |
+| Environment Service | 3001                    | 3001        | Environment orchestration        |
+| Challenge Service   | 3002                    | 3002        | Challenge validation             |
+| Progress Service    | 3003                    | 3003        | User progress tracking           |
+| Terminal Service    | 3004                    | 3004        | Terminal WebSocket service       |
+| UI Library          | 5173/5174               | N/A         | Component library (dev only)     |
+| Terminal Library    | 5173/5174               | N/A         | Terminal components (dev only)   |
 
 ## Initial Setup Steps
 
@@ -313,7 +313,7 @@ services:
       context: .
       dockerfile: apps/marketing/Dockerfile
     ports:
-      - "3005:3005"
+      - "4202:4202"
     environment:
       - NODE_ENV=production
 
@@ -406,7 +406,7 @@ server {
     add_header X-Frame-Options "SAMEORIGIN";
     add_header X-XSS-Protection "1; mode=block";
     add_header X-Content-Type-Options "nosniff";
-    
+
     # Default response for any other requests
     location / {
         return 404;
@@ -428,7 +428,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-    
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -486,16 +486,16 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v4
-        
+
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
-        
+
       - name: Set up kubeconfig
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
-          
+
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f kubernetes/
@@ -523,23 +523,23 @@ spec:
         app: auth-service
     spec:
       containers:
-      - name: auth-service
-        image: ghcr.io/yourusername/kasm-pro/auth-service:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: database-secrets
-              key: postgres-url
-        resources:
-          limits:
-            cpu: "0.5"
-            memory: "512Mi"
-          requests:
-            cpu: "0.1"
-            memory: "256Mi"
+        - name: auth-service
+          image: ghcr.io/yourusername/kasm-pro/auth-service:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: postgres-url
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "512Mi"
+            requests:
+              cpu: "0.1"
+              memory: "256Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -550,8 +550,8 @@ spec:
   selector:
     app: auth-service
   ports:
-  - port: 80
-    targetPort: 3000
+    - port: 80
+      targetPort: 3000
   type: ClusterIP
 ```
 
@@ -640,6 +640,7 @@ Add these scripts to `package.json`:
 The recommended development workflow is:
 
 1. Start database dependencies with Docker:
+
    ```bash
    npm run docker:deps
    ```
@@ -783,4 +784,4 @@ Refer to the following documentation files for more details:
 
 - `docs/docker-usage.md` - Detailed guide for Docker setup and usage
 - `docs/kubernetes-setup.md` - Kubernetes deployment configuration
-- `docs/development-workflow.md` - Development process and guidelines 
+- `docs/development-workflow.md` - Development process and guidelines

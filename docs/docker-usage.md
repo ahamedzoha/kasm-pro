@@ -26,18 +26,18 @@ KASM-Pro uses Docker for:
 
 ## Service Ports
 
-| Service | Development Port | Docker Port | Description |
-|---------|------------------|-------------|-------------|
-| Marketing Site | 3005 | 3005 | Next.js marketing website |
-| Application | 4200 (dev), 80 (Docker) | 80 | React SPA application interface |
-| API Gateway | N/A | 8080 | API gateway for backend services |
-| Auth Service | 3000 | 3000 | Authentication service |
-| Environment Service | 3001 | 3001 | Environment orchestration |
-| Challenge Service | 3002 | 3002 | Challenge validation |
-| Progress Service | 3003 | 3003 | User progress tracking |
-| Terminal Service | 3004 | 3004 | Terminal WebSocket service |
-| UI Library | 5173/5174 | N/A | Component library (dev only) |
-| Terminal Library | 5173/5174 | N/A | Terminal components (dev only) |
+| Service             | Development Port        | Docker Port | Description                      |
+| ------------------- | ----------------------- | ----------- | -------------------------------- |
+| Marketing Site      | 4202                    | 4202        | Next.js marketing website        |
+| Application         | 4200 (dev), 80 (Docker) | 80          | React SPA application interface  |
+| API Gateway         | N/A                     | 8080        | API gateway for backend services |
+| Auth Service        | 3000                    | 3000        | Authentication service           |
+| Environment Service | 3001                    | 3001        | Environment orchestration        |
+| Challenge Service   | 3002                    | 3002        | Challenge validation             |
+| Progress Service    | 3003                    | 3003        | User progress tracking           |
+| Terminal Service    | 3004                    | 3004        | Terminal WebSocket service       |
+| UI Library          | 5173/5174               | N/A         | Component library (dev only)     |
+| Terminal Library    | 5173/5174               | N/A         | Terminal components (dev only)   |
 
 ## Development Workflow
 
@@ -112,22 +112,22 @@ Use the ports defined in the Service Ports table above to access each service.
 
 ### API Endpoints
 
-| Service | Docker URL | Description |
-|---------|------------|-------------|
-| Auth Service | http://localhost:3000/api/auth | Authentication API |
+| Service             | Docker URL                             | Description                |
+| ------------------- | -------------------------------------- | -------------------------- |
+| Auth Service        | http://localhost:3000/api/auth         | Authentication API         |
 | Environment Service | http://localhost:3001/api/environments | Environment management API |
-| Challenge Service | http://localhost:3002/api/challenges | Challenge validation API |
-| Progress Service | http://localhost:3003/api/progress | User progress API |
-| Terminal Service | http://localhost:3004/api | Terminal WebSocket API |
-| API Gateway | http://localhost:8080/api | Combined API gateway |
+| Challenge Service   | http://localhost:3002/api/challenges   | Challenge validation API   |
+| Progress Service    | http://localhost:3003/api/progress     | User progress API          |
+| Terminal Service    | http://localhost:3004/api              | Terminal WebSocket API     |
+| API Gateway         | http://localhost:8080/api              | Combined API gateway       |
 
 ## Database Access
 
-| Database | Connection String | Default Credentials |
-|----------|-------------------|---------------------|
+| Database   | Connection String                | Default Credentials        |
+| ---------- | -------------------------------- | -------------------------- |
 | PostgreSQL | postgresql://localhost:5432/kasm | User: kasm, Password: kasm |
-| MongoDB | mongodb://localhost:27017/kasm | User: kasm, Password: kasm |
-| Redis | redis://localhost:6379 | No authentication |
+| MongoDB    | mongodb://localhost:27017/kasm   | User: kasm, Password: kasm |
+| Redis      | redis://localhost:6379           | No authentication          |
 
 ## Building for Production
 
@@ -156,15 +156,19 @@ See the `kubernetes/` directory for Kubernetes manifests.
 ### Common Issues
 
 #### Port Conflicts
+
 If you see `EADDRINUSE` errors, it means a port is already in use. Check if another service is using the same port or if a previous instance of the service is still running.
 
 #### Database Connection Issues
+
 If services can't connect to databases, make sure the database containers are running:
+
 ```bash
 docker-compose ps
 ```
 
 #### Hot Reloading Not Working
+
 When using `npm run start:dev` with Docker dependencies, changes to files might not trigger hot reloading. Try restarting the affected service.
 
 ### Container Logs
@@ -216,4 +220,4 @@ npm run docker:db:reset
 
 # View Docker logs
 npm run docker:logs
-``` 
+```

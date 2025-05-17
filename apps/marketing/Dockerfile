@@ -27,8 +27,8 @@ RUN addgroup -g 1001 -S nodejs && \
     chown -R nextjs:nodejs /app
 USER nextjs
 
-EXPOSE 3005
-ENV PORT 3005
+EXPOSE 4202
+ENV PORT 4202
 ENV HOSTNAME "0.0.0.0"
 
 CMD ["node", "server.js"] 
