@@ -1,7 +1,7 @@
 export function util(): string {
-	return "util";
+  return "util";
 }
 
 export const myNewUtil = () => {
-	return "myNewUtil" as const;
+  return "myNewUtil" as const;
 };

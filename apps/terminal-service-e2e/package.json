@@ -1,26 +1,26 @@
 {
-	"name": "@kasm-pro/terminal-service-e2e",
-	"version": "0.0.1",
-	"private": true,
-	"nx": {
-		"implicitDependencies": [
-			"@kasm-pro/terminal-service"
-		],
-		"targets": {
-			"e2e": {
-				"executor": "@nx/jest:jest",
-				"outputs": [
-					"{projectRoot}/test-output/jest/coverage"
-				],
-				"options": {
-					"jestConfig": "apps/terminal-service-e2e/jest.config.ts",
-					"passWithNoTests": true
-				},
-				"dependsOn": [
-					"@kasm-pro/terminal-service:build",
-					"@kasm-pro/terminal-service:serve"
-				]
-			}
-		}
-	}
+  "name": "@kasm-pro/terminal-service-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@kasm-pro/terminal-service"
+    ],
+    "targets": {
+      "e2e": {
+        "executor": "@nx/jest:jest",
+        "outputs": [
+          "{projectRoot}/test-output/jest/coverage"
+        ],
+        "options": {
+          "jestConfig": "apps/terminal-service-e2e/jest.config.ts",
+          "passWithNoTests": true
+        },
+        "dependsOn": [
+          "@kasm-pro/terminal-service:build",
+          "@kasm-pro/terminal-service:serve"
+        ]
+      }
+    }
+  }
 }

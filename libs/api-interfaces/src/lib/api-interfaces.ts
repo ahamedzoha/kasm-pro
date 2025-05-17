@@ -1,3 +1,3 @@
 export function apiInterfaces(): string {
-	return "api-interfaces";
+  return "api-interfaces";
 }

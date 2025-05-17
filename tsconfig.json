@@ -1,58 +1,58 @@
 {
-	"extends": "./tsconfig.base.json",
-	"compileOnSave": false,
-	"files": [],
-	"references": [
-		{
-			"path": "./apps/marketing"
-		},
-		{
-			"path": "./apps/app"
-		},
-		{
-			"path": "./apps/auth-service-e2e"
-		},
-		{
-			"path": "./apps/auth-service"
-		},
-		{
-			"path": "./apps/environment-service-e2e"
-		},
-		{
-			"path": "./apps/environment-service"
-		},
-		{
-			"path": "./apps/challenge-service-e2e"
-		},
-		{
-			"path": "./apps/challenge-service"
-		},
-		{
-			"path": "./apps/progress-service-e2e"
-		},
-		{
-			"path": "./apps/progress-service"
-		},
-		{
-			"path": "./apps/terminal-service-e2e"
-		},
-		{
-			"path": "./apps/terminal-service"
-		},
-		{
-			"path": "./libs/api-interfaces"
-		},
-		{
-			"path": "./libs/ui"
-		},
-		{
-			"path": "./libs/terminal"
-		},
-		{
-			"path": "./libs/validation"
-		},
-		{
-			"path": "./libs/util"
-		}
-	]
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/marketing"
+    },
+    {
+      "path": "./apps/app"
+    },
+    {
+      "path": "./apps/auth-service-e2e"
+    },
+    {
+      "path": "./apps/auth-service"
+    },
+    {
+      "path": "./apps/environment-service-e2e"
+    },
+    {
+      "path": "./apps/environment-service"
+    },
+    {
+      "path": "./apps/challenge-service-e2e"
+    },
+    {
+      "path": "./apps/challenge-service"
+    },
+    {
+      "path": "./apps/progress-service-e2e"
+    },
+    {
+      "path": "./apps/progress-service"
+    },
+    {
+      "path": "./apps/terminal-service-e2e"
+    },
+    {
+      "path": "./apps/terminal-service"
+    },
+    {
+      "path": "./libs/api-interfaces"
+    },
+    {
+      "path": "./libs/ui"
+    },
+    {
+      "path": "./libs/terminal"
+    },
+    {
+      "path": "./libs/validation"
+    },
+    {
+      "path": "./libs/util"
+    }
+  ]
 }
