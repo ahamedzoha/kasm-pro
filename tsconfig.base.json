@@ -1,11 +1,12 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
     "composite": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "lib": ["es2022"],
+    "lib": ["es2022", "dom"],
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "noEmitOnError": true,
@@ -16,6 +17,14 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["development"]
+    "customConditions": ["development"],
+    "baseUrl": ".",
+    "paths": {
+      "@kasm-pro/api-interfaces": ["libs/api-interfaces/src/index.ts"],
+      "@kasm-pro/ui": ["libs/ui/src/index.ts"],
+      "@kasm-pro/terminal": ["libs/terminal/src/index.ts"],
+      "@kasm-pro/validation": ["libs/validation/src/index.ts"],
+      "@kasm-pro/util": ["libs/util/src/index.ts"]
+    }
   }
 }
