@@ -1,0 +1,8 @@
+{
+  "name": "@kasm-pro/terminal",
+  "sourceRoot": "libs/terminal/src",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "tags": ["npm:public"],
+  "targets": {}
+}

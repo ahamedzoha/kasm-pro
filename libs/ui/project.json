@@ -1,0 +1,8 @@
+{
+  "name": "@kasm-pro/ui",
+  "sourceRoot": "libs/ui/src",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "tags": ["npm:public"],
+  "targets": {}
+}

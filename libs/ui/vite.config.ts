@@ -3,6 +3,9 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import dts from "vite-plugin-dts";
 import * as path from "path";
+import postcss from "postcss";
+import tailwindcss from "tailwindcss";
+import autoprefixer from "autoprefixer";
 
 export default defineConfig(() => ({
   root: __dirname,
@@ -20,6 +23,16 @@ export default defineConfig(() => ({
   // },
   // Configuration for building your library.
   // See: https://vitejs.dev/guide/build.html#library-mode
+  css: {
+    postcss: {
+      plugins: [
+        tailwindcss({
+          config: path.join(__dirname, "tailwind.config.js"),
+        }),
+        autoprefixer(),
+      ],
+    },
+  },
   build: {
     outDir: "./dist",
     emptyOutDir: true,

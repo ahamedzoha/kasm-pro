@@ -1,0 +1,8 @@
+{
+  "name": "@kasm-pro/api-interfaces",
+  "sourceRoot": "libs/api-interfaces/src",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "tags": ["npm:private"],
+  "targets": {}
+}

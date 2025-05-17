@@ -1,17 +1,12 @@
 import { Button, Text, Ui } from "@kasm-pro/ui";
 
 export default function Index() {
-  /*
-   * Replace the elements below with your own.
-   *
-   * Note: The corresponding styles are in the ./index.tailwind file.
-   */
   return (
-    <div>
+    <div className="bg-black text-white h-screen flex flex-col items-center justify-center">
       <Ui />
       <Text>Hello</Text>
       <Button>Click me</Button>
-      <div className="bg-red-500">Hello</div>
+      <div className="">Hello</div>
     </div>
   );
 }
