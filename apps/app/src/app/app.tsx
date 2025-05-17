@@ -4,9 +4,10 @@ import { myNewUtil } from "@kasm-pro/util"
 
 export function App() {
   const util = myNewUtil()
+
   console.log(util)
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center h-screen bg-black text-white">
       <Button>Click me</Button>
       <Routes>
         <Route

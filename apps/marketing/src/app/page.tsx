@@ -11,6 +11,7 @@ export default function Index() {
       <Ui />
       <Text>Hello</Text>
       <Button>Click me</Button>
+      <div className="bg-red-500">Hello</div>
     </div>
   )
 }
