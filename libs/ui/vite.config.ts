@@ -3,36 +3,20 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import dts from "vite-plugin-dts";
 import * as path from "path";
-import postcss from "postcss";
-import tailwindcss from "tailwindcss";
-import autoprefixer from "autoprefixer";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/libs/ui",
   plugins: [
     react(),
+    tailwindcss(),
     dts({
       entryRoot: "src",
       tsconfigPath: path.join(__dirname, "tsconfig.lib.json"),
     }),
   ],
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [ nxViteTsPaths() ],
-  // },
-  // Configuration for building your library.
-  // See: https://vitejs.dev/guide/build.html#library-mode
-  css: {
-    postcss: {
-      plugins: [
-        tailwindcss({
-          config: path.join(__dirname, "tailwind.config.js"),
-        }),
-        autoprefixer(),
-      ],
-    },
-  },
+
   build: {
     outDir: "./dist",
     emptyOutDir: true,

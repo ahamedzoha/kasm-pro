@@ -7,7 +7,8 @@ export function App() {
 
   console.log(util);
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-center h-screen bg-teal-500 text-white">
+      <h1 className="text-4xl font-bold text-amber-500">Welcome to App</h1>
       <Button>Click me</Button>
       <Card className="bg-red-500">
         <h1>Hello</h1>
@@ -18,6 +19,7 @@ export function App() {
       <Card className="bg-green-500">
         <h1>Hello</h1>
       </Card>
+
       <Routes>
         <Route
           path="/"
