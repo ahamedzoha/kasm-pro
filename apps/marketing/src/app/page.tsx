@@ -1,4 +1,4 @@
-import { Button, Text, Ui } from "@kasm-pro/ui";
+import { Button, Card, Text, Ui } from "@kasm-pro/ui";
 
 export default function Index() {
   return (
@@ -7,6 +7,9 @@ export default function Index() {
       <Text>Hello</Text>
       <Button>Click me</Button>
       <div className="">Hello</div>
+      <Card className="bg-red-500">Hello</Card>
+      <Card className="bg-blue-500">Hello</Card>
+      <Card className="bg-green-500">Hello</Card>
     </div>
   );
 }

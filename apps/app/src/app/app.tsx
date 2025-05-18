@@ -1,4 +1,4 @@
-import { Button } from "@kasm-pro/ui";
+import { Button, Card } from "@kasm-pro/ui";
 import { Route, Routes, Link } from "react-router-dom";
 import { myNewUtil } from "@kasm-pro/util";
 
@@ -9,6 +9,15 @@ export function App() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <Button>Click me</Button>
+      <Card className="bg-red-500">
+        <h1>Hello</h1>
+      </Card>
+      <Card className="bg-blue-500">
+        <h1>Hello</h1>
+      </Card>
+      <Card className="bg-green-500">
+        <h1>Hello</h1>
+      </Card>
       <Routes>
         <Route
           path="/"

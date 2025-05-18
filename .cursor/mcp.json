@@ -2,6 +2,10 @@
   "mcpServers": {
     "nx-mcp": {
       "url": "http://localhost:9160/sse"
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
     }
   }
 }
