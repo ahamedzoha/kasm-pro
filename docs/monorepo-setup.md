@@ -728,6 +728,112 @@ For strict type safety across the monorepo:
 }
 ```
 
+## Tailwind CSS v4 Configuration
+
+Tailwind CSS v4 requires special configuration in a monorepo setup to properly work with shared UI components.
+
+### Overview of the Solution
+
+Tailwind v4 only scans files in the direct package by default. When importing components from another package (like a shared UI library), you need to explicitly tell Tailwind to scan those files.
+
+### 1. UI Library Configuration
+
+In the UI library (`libs/ui/src/styles.css`):
+
+```css
+@import "tailwindcss";
+```
+
+### 2. React App Configuration (Vite)
+
+For the React app (`apps/app/src/styles.css`):
+
+```css
+/* Import Tailwind without source scanning */
+@import "tailwindcss";
+
+/* Import UI library styles */
+@import "../../../libs/ui/src/styles.css";
+
+/* Define specific source paths for UI components */
+@source "../../../libs/ui/src/**/*.{js,jsx,ts,tsx}";
+
+/* Scan local files as well */
+@source "./**/*.{js,jsx,ts,tsx}";
+@source "../**/*.{js,jsx,ts,tsx}";
+```
+
+Update the PostCSS configuration (`apps/app/postcss.config.js`):
+
+```js
+/**
+ * PostCSS configuration for app
+ */
+const { join } = require("path");
+
+module.exports = {
+  plugins: {
+    "@tailwindcss/postcss": {
+      base: join(__dirname, "../../"),
+    },
+  },
+};
+```
+
+Add the UI library as a dependency in `apps/app/package.json`:
+
+```json
+{
+  "dependencies": {
+    "@kasm-pro/ui": "*"
+  }
+}
+```
+
+### 3. Next.js App Configuration
+
+For the Next.js marketing app (`apps/marketing/src/app/global.css`):
+
+```css
+/* Import Tailwind without source scanning */
+@import "tailwindcss";
+
+/* Import UI library styles */
+@import "../../../libs/ui/src/styles.css";
+
+/* Define specific source paths for UI components */
+@source "../../../libs/ui/src/**/*.{js,jsx,ts,tsx}";
+
+/* Scan local files as well */
+@source "./**/*.{js,jsx,ts,tsx}";
+@source "../**/*.{js,jsx,ts,tsx}";
+```
+
+Update the PostCSS configuration (`apps/marketing/postcss.config.js`):
+
+```js
+const { join } = require("path");
+
+module.exports = {
+  plugins: {
+    "@tailwindcss/postcss": {
+      base: join(__dirname, "../../"),
+    },
+    autoprefixer: {},
+  },
+};
+```
+
+### Key Insights
+
+1. The `@source` directive tells Tailwind where to look for class names
+2. Relative paths are used to point to the UI library's source files
+3. The `base` option in PostCSS config helps resolve paths correctly
+4. Explicit imports of the UI library's styles ensure all styles are included
+5. Each app needs its own configuration pointing to the shared UI components
+
+This approach resolves the common issue in Tailwind v4 where styles aren't applied to components imported from other packages in the monorepo.
+
 2. Set up ESLint with TypeScript strict rules:
 
 ```bash
