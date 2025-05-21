@@ -1,4 +1,17 @@
+/* Reset old Tailwind imports */
 /* @tailwind base;
 @tailwind components;
 @tailwind utilities; */
+
+/* Import Tailwind without source scanning */
 @import "tailwindcss";
+
+/* Import UI library styles */
+@import "../../../libs/ui/src/styles.css";
+
+/* Define specific source paths for UI components */
+@source "../../../libs/ui/src/**/*.{js,jsx,ts,tsx}";
+
+/* Scan local files as well */
+@source "./**/*.{js,jsx,ts,tsx}";
+@source "../**/*.{js,jsx,ts,tsx}";

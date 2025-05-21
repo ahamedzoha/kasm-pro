@@ -8,13 +8,30 @@ export const Ui = () => {
   );
 };
 
-export const Text = ({ children }: { children: React.ReactNode }) => {
-  return <h1 className="text-red-500 text-2xl">{children}</h1>;
+export const Text = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
+  return <h1 className={cn("text-red-500 text-2xl", className)}>{children}</h1>;
 };
 
-export const Button = ({ children }: { children: React.ReactNode }) => {
+export const Button = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   return (
-    <button className="bg-teal-500 hover:bg-teal-600 transition-all duration-300 ease-in-out text-white p-2 rounded-md">
+    <button
+      className={cn(
+        "bg-teal-500 hover:bg-teal-600 transition-all duration-300 ease-in-out text-white p-2 rounded-md",
+        className
+      )}
+    >
       {children}
     </button>
   );
@@ -28,7 +45,7 @@ export const Card = ({
   className?: string;
 }) => {
   return (
-    <div className={cn("bg-white p-4 rounded-md shadow-md", className)}>
+    <div className={cn("bg-yellow-500 p-4 rounded-md shadow-md", className)}>
       {children}
     </div>
   );
