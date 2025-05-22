@@ -1,4 +1,4 @@
-import { Button, Card } from "@kasm-pro/ui";
+import { Button, Card, Text } from "@kasm-pro/ui";
 import { Route, Routes, Link } from "react-router-dom";
 import { myNewUtil } from "@kasm-pro/util";
 
@@ -8,7 +8,7 @@ export function App() {
   console.log(util);
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-teal-500 text-white">
-      <h1 className="text-4xl font-bold text-amber-500">Welcome to App</h1>
+      <Text className="text-4xl font-bold text-amber-500">Welcome to App</Text>
       <Button>Click me</Button>
       <Card className="bg-red-500">
         <h1>Hello</h1>
