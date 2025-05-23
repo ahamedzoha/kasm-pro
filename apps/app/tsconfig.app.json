@@ -1,5 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
+  "baseUrl": ".",
   "compilerOptions": {
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo",
@@ -27,7 +28,16 @@
     "src/**/*.spec.jsx",
     "src/**/*.test.jsx"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
+  "paths": {
+    "@/*": ["./src/*"]
+  },
+  "include": [
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/app.tsx"
+  ],
   "references": [
     {
       "path": "../../libs/util/tsconfig.lib.json"
