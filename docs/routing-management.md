@@ -1,32 +1,77 @@
-# Routing Management & Scaling Guide
+# API Gateway & Frontend Routing Management
 
 ## Overview
 
-This document outlines the flexible, scalable routing architecture implemented in the KASM-Pro application. The system uses dynamic route selection, functional route definitions, and centralized state management for optimal maintainability and developer experience.
+This document outlines the comprehensive routing architecture of the KASM-Pro application, featuring a **NestJS API Gateway** for backend microservices routing and dynamic frontend route management for optimal maintainability and developer experience.
 
-## Architecture Patterns
+## 🏛️ System Architecture
 
-### 🏗️ Core Architecture
+### Backend: NestJS API Gateway Architecture
 
 ```mermaid
-graph TD
-    A[App.tsx] --> B[Providers]
-    B --> C[AppRoutes]
-    C --> D{useAuth Hook}
-    D --> E[isAuthenticated?]
-    E -->|true| F[Dashboard Routes]
-    E -->|false| G[Auth Routes]
-    F --> H[useRoutes Hook]
-    G --> H
-    H --> I[AppLoader]
-    I --> J[Route Components]
+graph TB
+    A[Frontend Apps] --> B[NestJS API Gateway :9600]
 
-    style C fill:#e1f5fe
-    style D fill:#f3e5f5
-    style I fill:#e8f5e8
+    B --> C[Auth Service :3000]
+    B --> D[Environment Service :3001]
+    B --> E[Challenge Service :3002]
+    B --> F[Progress Service :3003]
+    B --> G[Terminal Service :3004]
+
+    B --> H[Redis Cache]
+    B --> I[Circuit Breaker]
+    B --> J[Rate Limiter]
+    B --> K[JWT Auth Guard]
+
+    L[WebSocket] --> B
+    L --> G
+
+    style B fill:#e1f5fe
+    style H fill:#fff3e0
+    style I fill:#ffebee
+    style J fill:#f3e5f5
+    style K fill:#e8f5e8
 ```
 
-### 🔄 Route Flow & Navigation Logic
+### API Gateway Features
+
+- **🔐 Centralized Authentication**: JWT validation and user context
+- **🚦 Rate Limiting**: Multi-tier protection (100/15min, 1000/hour, 5000/day)
+- **⚡ Caching**: Redis-based response caching with 5-minute TTL
+- **🔄 Circuit Breaker**: Fault tolerance for downstream services
+- **📊 Health Monitoring**: Comprehensive health checks and metrics
+- **🌐 WebSocket Proxy**: Real-time terminal connections
+- **🛡️ Security**: Helmet.js, CORS, request sanitization
+
+### API Route Mapping
+
+```typescript
+// Authentication Routes
+POST /api/v1/user/login        -> auth-service:3000
+POST /api/v1/user/register     -> auth-service:3000
+GET  /api/v1/user              -> auth-service:3000
+GET  /api/v1/auth/status       -> auth-service:3000
+
+// Environment Management
+POST /api/v1/environment       -> environment-service:3001
+GET  /api/v1/environments      -> environment-service:3001
+
+// Challenge System
+GET  /api/v1/challenges        -> challenge-service:3002
+GET  /api/v1/challenge         -> challenge-service:3002
+
+// Progress Tracking
+GET  /api/v1/progress          -> progress-service:3003
+POST /api/v1/progress          -> progress-service:3003
+
+// Terminal Operations
+HTTP: ALL  /terminal/*         -> terminal-service:3004
+WebSocket: /terminal/socket.io -> terminal-service:3004
+```
+
+## Frontend Architecture Patterns
+
+### 🔄 Frontend Route Flow & Navigation Logic
 
 ```mermaid
 flowchart TD

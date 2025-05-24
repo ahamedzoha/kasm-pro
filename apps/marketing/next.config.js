@@ -10,6 +10,10 @@ const nextConfig = {
   // Use this to set Nx-specific options
   // See: https://nx.dev/recipes/next/next-config-setup
   nx: {},
+  // Enable standalone output for Docker
+  output: "standalone",
+  // Ensure static assets are properly handled
+  outputFileTracingRoot: process.cwd(),
 };
 
 const plugins = [

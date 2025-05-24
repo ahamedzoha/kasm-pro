@@ -1,223 +1,305 @@
-# Docker Setup for KASM-Pro
+# Docker Usage Guide
 
-This document explains how to use Docker with the KASM-Pro platform.
-
-## Overview
-
-KASM-Pro uses Docker for:
-
-1. Local development with dependencies (PostgreSQL, MongoDB, Redis)
-2. Building and running containerized services
-3. Deployment to Kubernetes
+This guide provides comprehensive instructions for building, running, and managing the KASM-Pro application using Docker and Docker Compose.
 
 ## Prerequisites
 
-- Docker Engine 24.0+
-- Docker Compose 2.21.0+
-- Node.js 20.x
-- NPM 10.x
+- Docker 20.10+
+- Docker Compose 2.0+
+- 8GB+ RAM (recommended for full stack)
+- 20GB+ disk space
 
-## Project Structure
+## Architecture Overview
 
-- Each application has its own Dockerfile in its respective directory
-- The main `docker-compose.yml` file orchestrates all services
-- The `docker/gateway` directory contains API gateway configuration
-- Docker-specific configuration is in `.dockerignore`
+The application consists of several containerized services:
 
-## Service Ports
+### Frontend Applications
 
-| Service             | Development Port        | Docker Port | Description                      |
-| ------------------- | ----------------------- | ----------- | -------------------------------- |
-| Marketing Site      | 4202                    | 4202        | Next.js marketing website        |
-| Application         | 4200 (dev), 80 (Docker) | 80          | React SPA application interface  |
-| API Gateway         | N/A                     | 8080        | API gateway for backend services |
-| Auth Service        | 3000                    | 3000        | Authentication service           |
-| Environment Service | 3001                    | 3001        | Environment orchestration        |
-| Challenge Service   | 3002                    | 3002        | Challenge validation             |
-| Progress Service    | 3003                    | 3003        | User progress tracking           |
-| Terminal Service    | 3004                    | 3004        | Terminal WebSocket service       |
-| UI Library          | 5173/5174               | N/A         | Component library (dev only)     |
-| Terminal Library    | 5173/5174               | N/A         | Terminal components (dev only)   |
+- **App (React + Vite)**: Main learning platform UI on port 4200
+- **Marketing (Next.js)**: Marketing site on port 4202
 
-## Development Workflow
+### Backend Services
 
-### NX Development with Docker Dependencies
+- **API Gateway (NestJS)**: Centralized routing, auth, and security on port 9600
+- **Auth Service**: User authentication and authorization
+- **Environment Service**: Container environment management
+- **Challenge Service**: Learning challenges and validation
+- **Progress Service**: User progress tracking
+- **Terminal Service**: WebSocket terminal connections
 
-The recommended development workflow is to:
+### Data Services
 
-1. Start just the database dependencies:
+- **PostgreSQL**: Primary database on port 5432
+- **MongoDB**: Course content and challenges on port 27017
+- **Redis**: Caching and sessions on port 6379
+
+## Quick Start
+
+### 1. Build and Start All Services
 
 ```bash
-npm run docker:deps
+# Build all services
+docker compose build
+
+# Start the entire stack
+docker compose up -d
+
+# Check service status
+docker compose ps
 ```
 
-2. In another terminal, start your development services:
+### 2. Access Applications
+
+- **Main App**: http://localhost:4200
+- **Marketing Site**: http://localhost:4202
+- **API Gateway**: http://localhost:9600
+- **API Health Check**: http://localhost:9600/api/health
+
+## Service Management
+
+### Individual Service Commands
 
 ```bash
-npm run start:dev
+# Build specific service
+docker compose build app
+docker compose build marketing
+docker compose build api-gateway
+
+# Start specific service
+docker compose up -d app
+
+# Restart service
+docker compose restart app
+
+# View logs
+docker compose logs app
+docker compose logs -f marketing  # Follow logs
 ```
 
-This approach gives you hot-reloading for all services while providing the database dependencies.
-
-### Docker-Only Development
-
-To use Docker for everything (slower, but matches production):
+### Database Management
 
 ```bash
-npm run docker:up
+# Start only databases
+docker compose up -d postgres mongodb redis
+
+# Reset databases (WARNING: destroys all data)
+docker compose down -v
+docker compose up -d postgres mongodb redis
+
+# Access database directly
+docker exec -it kasm-pro-postgres-1 psql -U kasm -d kasm
+docker exec -it kasm-pro-mongodb-1 mongosh mongodb://kasm:kasm@localhost:27017/kasm
+docker exec -it kasm-pro-redis-1 redis-cli
 ```
 
-## Starting Docker Services
+## Frontend Applications
 
-### Starting Individual Database Services
+### React App (Vite Preview Server)
+
+The main learning platform frontend now uses Vite's preview server instead of nginx:
+
+- **Technology**: React 19 + Vite 6 + TailwindCSS
+- **Port**: 4200
+- **Build Output**: `apps/app/dist/`
+- **Health Check**: Node.js HTTP request
+- **Features**: Hot reload in development, optimized production builds
+
+**Development**:
 
 ```bash
-# Start just PostgreSQL
-docker-compose up postgres
+# Local development
+npm run start:app
 
-# Start just MongoDB
-docker-compose up mongodb
+# Build for production
+nx build app --prod
 
-# Start just Redis
-docker-compose up redis
+# Preview production build
+cd apps/app && vite preview
 ```
 
-### Starting All Services
+### Marketing App (Next.js Standalone)
+
+The marketing site uses Next.js standalone mode for optimal Docker deployment:
+
+- **Technology**: Next.js 15 + TailwindCSS
+- **Port**: 4202
+- **Build Output**: Standalone server + static assets
+- **Health Check**: Node.js HTTP request
+- **Features**: SSR, static optimization, automatic code splitting
+
+**Development**:
 
 ```bash
-docker-compose up
+# Local development
+npm run start:marketing
+
+# Build for production
+nx build marketing --prod
 ```
 
-### Rebuilding After Changes
+## Environment Variables
+
+### Core Configuration
 
 ```bash
-docker-compose up --build
+# API Gateway
+API_GATEWAY_URL=http://api-gateway:9600
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+JWT_EXPIRES_IN=1h
+
+# Database URLs
+DATABASE_URL=postgresql://kasm:kasm@postgres:5432/kasm
+MONGODB_URI=mongodb://kasm:kasm@mongodb:27017/kasm?authSource=admin
+REDIS_URL=redis://redis:6379
+
+# Service URLs (internal)
+AUTH_SERVICE_URL=http://auth-service:3000
+ENVIRONMENT_SERVICE_URL=http://environment-service:3001
+CHALLENGE_SERVICE_URL=http://challenge-service:3002
+PROGRESS_SERVICE_URL=http://progress-service:3003
+TERMINAL_SERVICE_URL=http://terminal-service:3004
 ```
 
-## Individual Services
+## Health Checks and Monitoring
 
-Each service can be built and run individually:
+### Service Health Endpoints
 
 ```bash
-# Build and run auth service
-docker-compose up --build auth-service
+# API Gateway health
+curl http://localhost:9600/api/health/ready
+curl http://localhost:9600/api/health/live
 
-# Build and run terminal service
-docker-compose up --build terminal-service
+# Frontend app health (automatic)
+curl http://localhost:4200  # React app
+curl http://localhost:4202  # Marketing site
+
+# Database health
+docker compose ps  # Shows health status
 ```
 
-## Accessing Services
-
-Use the ports defined in the Service Ports table above to access each service.
-
-### API Endpoints
-
-| Service             | Docker URL                             | Description                |
-| ------------------- | -------------------------------------- | -------------------------- |
-| Auth Service        | http://localhost:3000/api/auth         | Authentication API         |
-| Environment Service | http://localhost:3001/api/environments | Environment management API |
-| Challenge Service   | http://localhost:3002/api/challenges   | Challenge validation API   |
-| Progress Service    | http://localhost:3003/api/progress     | User progress API          |
-| Terminal Service    | http://localhost:3004/api              | Terminal WebSocket API     |
-| API Gateway         | http://localhost:8080/api              | Combined API gateway       |
-
-## Database Access
-
-| Database   | Connection String                | Default Credentials        |
-| ---------- | -------------------------------- | -------------------------- |
-| PostgreSQL | postgresql://localhost:5432/kasm | User: kasm, Password: kasm |
-| MongoDB    | mongodb://localhost:27017/kasm   | User: kasm, Password: kasm |
-| Redis      | redis://localhost:6379           | No authentication          |
-
-## Building for Production
-
-To build production-ready Docker images:
+### Log Monitoring
 
 ```bash
-# Build all images
-docker-compose build
+# View all logs
+docker compose logs
 
-# Build a specific service
-docker-compose build auth-service
+# Follow specific service logs
+docker compose logs -f api-gateway
+docker compose logs -f app
+
+# Filter logs by time
+docker compose logs --since 30m api-gateway
 ```
 
-## Docker in CI/CD
+## Production Deployment
 
-GitHub Actions workflows automatically build Docker images on push to the main branch.
-See `.github/workflows/docker-build.yml` for configuration details.
+### Security Considerations
 
-## Kubernetes Deployment
+- All services run as non-root users
+- JWT secrets must be changed for production
+- Network isolation between services
+- Health checks for high availability
+- Proper volume persistence for data
 
-The Docker images built by this process are deployed to Kubernetes.
-See the `kubernetes/` directory for Kubernetes manifests.
+### Performance Optimization
+
+- Multi-stage Docker builds for smaller images
+- Production-only dependencies in runtime
+- Nginx caching headers for static assets
+- Redis caching for API responses
+- CDN integration for static assets
+
+### Scaling
+
+```bash
+# Scale specific services
+docker compose up -d --scale auth-service=3
+docker compose up -d --scale api-gateway=2
+
+# Use load balancer (nginx, HAProxy, etc.)
+# Configure database read replicas
+# Use Redis cluster for high availability
+```
 
 ## Troubleshooting
 
 ### Common Issues
 
-#### Port Conflicts
-
-If you see `EADDRINUSE` errors, it means a port is already in use. Check if another service is using the same port or if a previous instance of the service is still running.
-
-#### Database Connection Issues
-
-If services can't connect to databases, make sure the database containers are running:
+**Port Conflicts**:
 
 ```bash
-docker-compose ps
+# Check what's using ports
+sudo lsof -i :4200
+sudo lsof -i :9600
+
+# Change ports in docker-compose.yml if needed
 ```
 
-#### Hot Reloading Not Working
-
-When using `npm run start:dev` with Docker dependencies, changes to files might not trigger hot reloading. Try restarting the affected service.
-
-### Container Logs
+**Database Connection Issues**:
 
 ```bash
-# View logs for a specific service
-docker-compose logs auth-service
+# Check database health
+docker compose ps postgres mongodb redis
 
-# Follow logs
-docker-compose logs -f auth-service
+# Reset databases
+docker compose down -v && docker compose up -d postgres mongodb redis
 ```
 
-### Restarting Services
+**Frontend Assets Not Loading**:
+
+- For React app: Check vite preview server logs
+- For Marketing: Verify Next.js static file serving
+- Clear browser cache and Docker build cache
+
+**Memory Issues**:
 
 ```bash
-# Restart a specific service
-docker-compose restart auth-service
+# Check resource usage
+docker stats
+
+# Clean up unused resources
+docker system prune -a
+docker volume prune
 ```
 
-### Cleaning Up
+### Development Mode
 
 ```bash
-# Stop all containers
-docker-compose down
+# Run only databases for local development
+docker compose up -d postgres mongodb redis
 
-# Remove volumes (will delete database data)
-docker-compose down -v
+# Run frontend apps locally
+npm run start:app     # React app on 4200
+npm run start:marketing  # Marketing on 4202
+
+# Run backend services in Docker
+docker compose up -d auth-service environment-service challenge-service progress-service terminal-service api-gateway
 ```
 
-## Docker Scripts
+## Backup and Recovery
 
-The following npm scripts are available for Docker operations:
+### Database Backups
 
 ```bash
-# Build all Docker images
-npm run docker:build
+# PostgreSQL backup
+docker exec kasm-pro-postgres-1 pg_dump -U kasm kasm > backup_$(date +%Y%m%d).sql
 
-# Start all Docker services
-npm run docker:up
+# MongoDB backup
+docker exec kasm-pro-mongodb-1 mongodump --uri="mongodb://kasm:kasm@localhost:27017/kasm?authSource=admin" --out=/backup
 
-# Stop all Docker services
-npm run docker:down
+# Redis backup (automatic RDB snapshots)
+docker exec kasm-pro-redis-1 redis-cli BGSAVE
+```
 
-# Start just the database dependencies
-npm run docker:deps
+### Volume Management
 
-# Reset database data
-npm run docker:db:reset
+```bash
+# List volumes
+docker volume ls
 
-# View Docker logs
-npm run docker:logs
+# Backup volumes
+docker run --rm -v kasm-pro_postgres-data:/data -v $(pwd):/backup ubuntu tar czf /backup/postgres-backup.tar.gz /data
+
+# Restore volumes
+docker run --rm -v kasm-pro_postgres-data:/data -v $(pwd):/backup ubuntu tar xzf /backup/postgres-backup.tar.gz -C /
 ```

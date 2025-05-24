@@ -1,30 +1,46 @@
-# Base stage for dependencies
-FROM node:20-alpine AS deps
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
-
-# Build stage
+# Stage 1: Build stage
 FROM node:20-alpine AS builder
+
+# Set the working directory
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+
+# Copy package files
+COPY package*.json ./
+COPY tsconfig*.json ./
+COPY nx.json ./
+
+# Install ALL dependencies (including dev dependencies for build)
+RUN npm ci --frozen-lockfile
+
+# Copy source code and workspace files
+COPY apps/challenge-service ./apps/challenge-service
+COPY libs ./libs
+
+# Build the application
 RUN npx nx build challenge-service --prod
 
-# Runtime stage
-FROM node:20-alpine AS runner
+# Stage 2: Runtime stage
+FROM node:20-alpine AS runtime
+
+# Create app directory
 WORKDIR /app
-ENV NODE_ENV=production
 
-# Copy only necessary files
-COPY --from=builder /app/dist/apps/challenge-service ./
-COPY --from=builder /app/node_modules ./node_modules
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nestjs -u 1001
 
-# Use non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nestjs -u 1001 && \
-    chown -R nestjs:nodejs /app
+# Copy built application from builder stage (note: build output is in apps/challenge-service/dist/)
+COPY --from=builder --chown=nestjs:nodejs /app/apps/challenge-service/dist ./
+COPY --from=builder --chown=nestjs:nodejs /app/package*.json ./
+
+# Install only production dependencies in runtime stage
+RUN npm ci --only=production --frozen-lockfile && npm cache clean --force
+
+# Switch to non-root user
 USER nestjs
 
+# Expose the port
 EXPOSE 3002
+
+# Start the application
 CMD ["node", "main.js"] 

@@ -20,7 +20,12 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@kasm-pro/ui": ["../../libs/ui/src"],
+      "@kasm-pro/util": ["../../libs/util/src"],
+      "@kasm-pro/terminal": ["../../libs/terminal/src"],
+      "@kasm-pro/validation": ["../../libs/validation/src"],
+      "@kasm-pro/api-interfaces": ["../../libs/api-interfaces/src"]
     },
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"

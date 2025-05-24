@@ -2,7 +2,7 @@ import { cn } from "@kasm-pro/util";
 
 export const Ui = () => {
   return (
-    <div className="bg-red-500">
+    <div className="bg-red-500 p-4 rounded-md shadow-md">
       <h1>Welcome to Ui!</h1>
     </div>
   );

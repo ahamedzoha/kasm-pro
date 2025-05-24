@@ -84,7 +84,8 @@
         "apps/environment-service-e2e/**/*",
         "apps/challenge-service-e2e/**/*",
         "apps/progress-service-e2e/**/*",
-        "apps/terminal-service-e2e/**/*"
+        "apps/terminal-service-e2e/**/*",
+        "apps/api-gateway-e2e/**/*"
       ]
     }
   ],

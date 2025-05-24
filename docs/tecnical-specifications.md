@@ -7,7 +7,7 @@ The platform follows a microservices architecture with the following primary com
 - **Frontend Applications**:
   - **Marketing Site**: Next.js-based SSR application for SEO-optimized public content
   - **Application**: Vite React SPA with WebSocket connections for terminal functionality
-- **API Gateway**: Entry point for all API requests, handling routing and basic authentication
+- **API Gateway**: NestJS-based centralized gateway for routing, authentication, and security
 - **Authentication Service**: Manages user authentication and authorization
 - **Environment Manager**: Orchestrates the creation and management of virtual environments
 - **Challenge Service**: Manages challenge content and validation logic
@@ -21,7 +21,7 @@ The platform follows a microservices architecture with the following primary com
 - **Object Storage**: Stores static assets, course content, and environment templates
 - **Relational Database**: Stores user data, progress, and structured content
 - **NoSQL Database**: Stores challenge content and flexible schema data
-- **Redis Cluster**: Handles session management and caching
+- **Redis Cluster**: Handles session management, caching, and API Gateway cache
 - **ELK Stack**: Provides logging, monitoring, and analytics
 
 ### 1.3 Deployment Topology
@@ -62,15 +62,38 @@ The platform follows a microservices architecture with the following primary com
 
 ## 3. Backend Services Specifications
 
-### 3.1 API Gateway
+### 3.1 API Gateway (NestJS)
 
-- **Technology**: Kong API Gateway
-- **Features**:
-  - JWT validation
-  - Rate limiting (100 req/min per user)
-  - Request logging
-  - Service discovery via Kubernetes
-  - CORS handling
+- **Technology**: NestJS 10 with TypeScript
+- **Port**: 9600 (Production: :9600)
+- **Core Features**:
+  - **Authentication**: JWT validation with configurable expiry (1h default)
+  - **Rate Limiting**: Multi-tier protection (100/15min, 1000/hour, 5000/day per user)
+  - **Caching**: Redis-based response caching with 5-minute TTL for GET requests
+  - **Circuit Breaker**: Fault tolerance (5 failure threshold, 60s reset)
+  - **Health Monitoring**: Kubernetes-ready endpoints (/health, /health/ready, /health/live)
+  - **WebSocket Proxy**: Real-time terminal connections via Socket.IO
+  - **Security**: Helmet.js, CORS protection, request sanitization
+  - **Logging**: Comprehensive request/response logging with sensitive data removal
+- **Route Mapping**: Dynamic service discovery with configurable timeouts
+  - `/api/v1/user/*` → auth-service:3000
+  - `/api/v1/environment/*` → environment-service:3001
+  - `/api/v1/challenge/*` → challenge-service:3002
+  - `/api/v1/progress/*` → progress-service:3003
+  - `/terminal/*` → terminal-service:3004 (HTTP + WebSocket)
+- **Performance**: < 500ms API response time, < 100ms terminal latency
+- **Response Format**: Standardized API responses with success/error structure
+- **Environment Variables**:
+  ```bash
+  PORT=9600
+  JWT_SECRET=secure-secret-key
+  REDIS_HOST=redis
+  AUTH_SERVICE_URL=http://auth-service:3000
+  ENVIRONMENT_SERVICE_URL=http://environment-service:3001
+  CHALLENGE_SERVICE_URL=http://challenge-service:3002
+  PROGRESS_SERVICE_URL=http://progress-service:3003
+  TERMINAL_SERVICE_URL=http://terminal-service:3004
+  ```
 
 ### 3.2 Authentication Service
 
