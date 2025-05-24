@@ -1,3 +1,5 @@
+import ReduxProvider from "./ReduxProvider";
+
 export const Providers = ({ children }: { children: React.ReactNode }) => {
-  return <>{children}</>;
+  return <ReduxProvider>{children}</ReduxProvider>;
 };
