@@ -1,68 +1,53 @@
-import {
-  API_ENDPOINTS,
-  HTTP_METHOD,
-  RTK_QUERY_TAGS,
-} from "../../../common/constants";
-import { ApiSuccessResponse } from "../../../common/interfaces";
-import { defaultTransformErrorResponse } from "../../../common/utils";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { protectedBaseQueryWithReauth } from "../../../store/api/base";
+import { RTK_QUERY_TAG_TYPES } from "../../../store/constants";
+import { IApiUserData } from "../types";
 
-import { protectedApiSlice } from "../../../store/api/protected";
-import { setUser } from "../store";
-
-import type { IApiUserData } from "../types";
-
-const authApiSlice = protectedApiSlice.injectEndpoints({
+// Protected auth-specific API slice
+export const protectedAuthApiSlice = createApi({
+  reducerPath: "protectedAuthApi",
+  baseQuery: protectedBaseQueryWithReauth,
+  tagTypes: RTK_QUERY_TAG_TYPES,
+  refetchOnMountOrArgChange: 30,
+  refetchOnFocus: true,
+  refetchOnReconnect: true,
   endpoints: (builder) => ({
-    getUserProfile: builder.query<IApiUserData, void>({
-      query: () => API_ENDPOINTS.USER.PROFILE,
-      providesTags: [RTK_QUERY_TAGS.USER],
-      onQueryStarted: async (_, api) => {
-        const { data } = await api.queryFulfilled;
-        api.dispatch(setUser(data));
-      },
-      transformResponse: (response: ApiSuccessResponse<IApiUserData>) => {
-        return response.data;
-      },
-      transformErrorResponse: defaultTransformErrorResponse,
+    // Get user profile
+    getUserProfile: builder.query<
+      { success: boolean; data: IApiUserData },
+      void
+    >({
+      query: () => "/user/profile",
+      providesTags: ["User"],
     }),
 
-    updateUserProfile: builder.mutation<IApiUserData, Partial<IApiUserData>>({
-      query: (profileData) => ({
-        url: API_ENDPOINTS.USER.UPDATE_PROFILE,
-        method: HTTP_METHOD.PATCH,
-        body: profileData,
+    // Update user profile
+    updateUserProfile: builder.mutation<
+      { success: boolean; data: IApiUserData },
+      Partial<IApiUserData>
+    >({
+      query: (updates) => ({
+        url: "/user/profile",
+        method: "PATCH",
+        body: updates,
       }),
-      invalidatesTags: [RTK_QUERY_TAGS.USER],
-      transformResponse: (response: ApiSuccessResponse<IApiUserData>) => {
-        return response.data;
-      },
-      transformErrorResponse: defaultTransformErrorResponse,
+      invalidatesTags: ["User"],
     }),
 
-    logout: builder.mutation<{ message: string }, void>({
+    // Logout
+    logout: builder.mutation<{ success: boolean }, void>({
       query: () => ({
-        url: API_ENDPOINTS.AUTH.LOGOUT,
-        method: HTTP_METHOD.POST,
+        url: "/auth/logout",
+        method: "POST",
       }),
-      invalidatesTags: [
-        RTK_QUERY_TAGS.USER,
-        RTK_QUERY_TAGS.COURSE,
-        RTK_QUERY_TAGS.CHALLENGE,
-        RTK_QUERY_TAGS.ENVIRONMENT,
-        RTK_QUERY_TAGS.PROGRESS,
-      ],
-      transformResponse: (
-        response: ApiSuccessResponse<{ message: string }>
-      ) => {
-        return response.data;
-      },
-      transformErrorResponse: defaultTransformErrorResponse,
+      invalidatesTags: ["User"],
     }),
   }),
 });
 
+// Export hooks
 export const {
   useGetUserProfileQuery,
   useUpdateUserProfileMutation,
   useLogoutMutation,
-} = authApiSlice;
+} = protectedAuthApiSlice;

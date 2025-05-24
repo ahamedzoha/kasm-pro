@@ -5,6 +5,7 @@ export {
   useGetUserProfileQuery,
   useUpdateUserProfileMutation,
   useLogoutMutation,
+  protectedAuthApiSlice,
 } from "./auth.api";
 
 // Public API hooks (unauthenticated endpoints)
@@ -14,7 +15,5 @@ export {
   useForgotPasswordMutation,
   useResetPasswordMutation,
   useVerifyEmailMutation,
+  publicAuthApiSlice,
 } from "./public.api";
-
-// Export the API slices themselves if needed
-export { publicAuthApiSlice } from "./public.api";

@@ -11,7 +11,7 @@ export const STORE_SLICES = {
 // API slice names
 export const API_SLICES = {
   PUBLIC_API: "publicApi",
-  PROTECTED_API: "protectedApi",
+  // Other API slices are now managed by their respective features
 } as const;
 
 // Redux Persist configuration

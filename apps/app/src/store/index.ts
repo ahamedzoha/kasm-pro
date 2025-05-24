@@ -12,8 +12,10 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import { publicAuthApiSlice } from "../features/auth/api/public.api";
-import { protectedApiSlice } from "./api/protected";
+import {
+  publicAuthApiSlice,
+  protectedAuthApiSlice,
+} from "../features/auth/api";
 import { authReducer } from "../features/auth/store";
 import globalReducer from "./slices/global.slice";
 import { PERSIST_KEYS, API_SLICES } from "./constants";
@@ -30,9 +32,9 @@ const persistedAuthReducer = persistReducer(authPersistConfig, authReducer);
 
 // Combine all reducers
 const rootReducer = combineReducers({
-  // API slices
+  // API slices - feature-specific APIs are managed by their features
   [API_SLICES.PUBLIC_API]: publicAuthApiSlice.reducer,
-  [API_SLICES.PROTECTED_API]: protectedApiSlice.reducer,
+  protectedAuthApi: protectedAuthApiSlice.reducer,
 
   // Feature slices
   auth: persistedAuthReducer,
@@ -47,7 +49,10 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat([publicAuthApiSlice.middleware, protectedApiSlice.middleware]),
+    }).concat([
+      publicAuthApiSlice.middleware,
+      protectedAuthApiSlice.middleware,
+    ]),
   devTools: process.env.NODE_ENV !== "production",
 });
 

@@ -1,22 +1,15 @@
 import React, { useState } from "react";
-import { useAppSelector, useAppDispatch } from "../../../store/hooks";
-import {
-  selectIsAuthenticated,
-  selectAuthUser,
-  setTokens,
-  setUser,
-  removeTokens,
-} from "../store";
-import { useLogoutMutation } from "../api/auth.api";
-import { useLoginMutation } from "../api/public.api";
+import { useAuthFeature } from "../hooks";
 
 export const AuthExample: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
-  const user = useAppSelector(selectAuthUser);
-
-  const [login, { isLoading: isLoginLoading }] = useLoginMutation();
-  const [logout, { isLoading: isLogoutLoading }] = useLogoutMutation();
+  const {
+    isAuthenticated,
+    user,
+    isLoginLoading,
+    isLogoutLoading,
+    loginUser,
+    logoutUser,
+  } = useAuthFeature();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,13 +17,7 @@ export const AuthExample: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const result = await login({ email, password }).unwrap();
-
-      if (result.success) {
-        // Store tokens and user data
-        dispatch(setTokens(result.data.tokens));
-        dispatch(setUser(result.data.user));
-      }
+      await loginUser({ email, password });
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -38,13 +25,9 @@ export const AuthExample: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await logout().unwrap();
-      // Clear tokens and user data
-      dispatch(removeTokens());
+      await logoutUser();
     } catch (error) {
       console.error("Logout failed:", error);
-      // Clear tokens anyway on error
-      dispatch(removeTokens());
     }
   };
 
