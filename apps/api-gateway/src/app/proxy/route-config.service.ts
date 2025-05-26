@@ -38,7 +38,7 @@ export class RouteConfigService {
           "AUTH_SERVICE_URL",
           "http://auth-service:3000"
         ),
-        healthPath: "/health",
+        healthPath: "/api/health",
       },
       {
         name: "environment-service",
@@ -46,7 +46,7 @@ export class RouteConfigService {
           "ENVIRONMENT_SERVICE_URL",
           "http://environment-service:3001"
         ),
-        healthPath: "/health",
+        healthPath: "/api/health",
       },
       {
         name: "challenge-service",
@@ -54,7 +54,7 @@ export class RouteConfigService {
           "CHALLENGE_SERVICE_URL",
           "http://challenge-service:3002"
         ),
-        healthPath: "/health",
+        healthPath: "/api/health",
       },
       {
         name: "progress-service",
@@ -62,7 +62,7 @@ export class RouteConfigService {
           "PROGRESS_SERVICE_URL",
           "http://progress-service:3003"
         ),
-        healthPath: "/health",
+        healthPath: "/api/health",
       },
       {
         name: "terminal-service",
@@ -70,7 +70,7 @@ export class RouteConfigService {
           "TERMINAL_SERVICE_URL",
           "http://terminal-service:3004"
         ),
-        healthPath: "/health",
+        healthPath: "/api/health",
       },
     ];
 
@@ -82,7 +82,7 @@ export class RouteConfigService {
   }
 
   private initializeRoutes() {
-    // Define route mappings as specified by the user
+    // Define route mappings
     const routeConfigs: RouteConfig[] = [
       // Auth service routes
       {

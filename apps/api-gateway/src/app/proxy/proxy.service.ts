@@ -264,6 +264,7 @@ export class ProxyService {
           status: "healthy",
           responseTime: response.headers["x-response-time"] || "unknown",
           circuit: this.circuitBreakerService.getCircuitStatus(service.name),
+          data: response.data,
         };
       } catch (error: unknown) {
         const errorMessage =
