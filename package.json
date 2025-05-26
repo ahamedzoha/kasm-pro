@@ -20,7 +20,13 @@
     "affected:apps": "nx affected:apps",
     "affected:build": "nx affected:build",
     "affected:test": "nx affected:test",
-    "graph": "nx graph"
+    "graph": "nx graph",
+    "dev:deps": "docker compose up postgres mongodb redis -d",
+    "dev:services": "nx run-many --target=serve --projects=auth-service,environment-service,challenge-service,progress-service,terminal-service --parallel",
+    "dev:gateway": "nx serve api-gateway",
+    "dev:frontend": "concurrently \"nx serve app\" \"nx serve marketing\"",
+    "dev": "concurrently \"npm run dev:deps\" \"sleep 5 && npm run dev:services\" \"sleep 10 && npm run dev:gateway\" \"sleep 15 && npm run dev:frontend\"",
+    "dev:stop": "docker compose down"
   },
   "private": true,
   "devDependencies": {

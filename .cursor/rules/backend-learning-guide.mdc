@@ -1,0 +1,323 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Backend Learning Guide & Code Analysis
+
+## Learning Motivation & Context
+
+**Project Goal**: This KASM-Pro project serves as a comprehensive hands-on learning platform for advancing backend development, DevOps, and software architecture skills. As a frontend developer with 6 years of experience and basic Node.js/NestJS/Express knowledge, this project provides practical exposure to:
+
+- **Advanced Backend Architecture**: Microservices, API Gateway patterns, service mesh concepts
+- **Authentication & Security**: JWT implementation, HTTP-only cookies, CORS, security headers
+- **Real-time Communication**: WebSocket management, Socket.IO, bidirectional streams
+- **Container Orchestration**: Docker containerization, Kubernetes deployment, environment isolation
+- **Reactive Programming**: RxJS for handling async operations, observables, and data streams
+- **Database Architecture**: Multi-database strategies (PostgreSQL, MongoDB, Redis), optimization
+- **DevOps Integration**: CI/CD pipelines, infrastructure as code, monitoring and logging
+
+## Advanced Backend Concepts Explained
+
+### 1. Microservices Architecture & API Gateway
+```typescript
+// API Gateway Pattern - Central entry point
+// Benefits: Service discovery, load balancing, authentication
+// Trade-offs: Single point of failure, complexity in routing
+
+@Controller('api')
+export class ApiGatewayController {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly proxyService: ProxyService
+  ) {}
+
+  // Route requests to appropriate microservices
+  @All('auth/*')
+  async proxyAuth(@Req() req, @Res() res) {
+    return this.proxyService.forward(req, res, 'auth-service');
+  }
+}
+```
+
+**Learning Focus**: Understand service boundaries, communication patterns, and data consistency challenges.
+
+### 2. JWT Authentication & Security
+```typescript
+// JWT with HTTP-only cookies for enhanced security
+// Why HTTP-only: Prevents XSS attacks from accessing tokens
+// Why Secure flag: Ensures transmission only over HTTPS
+// Why SameSite: Protects against CSRF attacks
+
+@Injectable()
+export class AuthService {
+  async login(credentials: LoginDto) {
+    const user = await this.validateUser(credentials);
+    const payload = { sub: user.id, email: user.email };
+    
+    // Generate JWT token
+    const token = this.jwtService.sign(payload);
+    
+    // Set HTTP-only cookie for security
+    response.cookie('access_token', token, {
+      httpOnly: true,  // Prevents JavaScript access
+      secure: true,    // HTTPS only
+      sameSite: 'strict', // CSRF protection
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+  }
+}
+```
+
+**Learning Focus**: Security implications of different authentication strategies, token storage mechanisms.
+
+### 3. RxJS & Reactive Programming
+```typescript
+// RxJS for handling complex async operations
+// Benefits: Composable, cancellable, powerful operators
+// Use cases: Real-time data streams, complex async workflows
+
+@Injectable()
+export class TerminalService {
+  // Observable stream for terminal output
+  getTerminalStream(sessionId: string): Observable<TerminalOutput> {
+    return this.websocketService.listen(sessionId).pipe(
+      // Transform raw data to structured format
+      map(data => this.parseTerminalOutput(data)),
+      // Handle errors gracefully
+      catchError(error => this.handleTerminalError(error)),
+      // Retry on connection failures
+      retryWhen(errors => 
+        errors.pipe(
+          delay(1000),
+          take(3)
+        )
+      ),
+      // Clean up resources
+      finalize(() => this.cleanupSession(sessionId))
+    );
+  }
+}
+```
+
+**Learning Focus**: Functional reactive programming, stream composition, error handling patterns.
+
+### 4. WebSocket & Real-time Communication
+```typescript
+// Socket.IO for bidirectional real-time communication
+// Concepts: Events, rooms, namespaces, connection management
+
+@WebSocketGateway({
+  cors: { origin: process.env.FRONTEND_URL, credentials: true },
+  namespace: '/terminal'
+})
+export class TerminalGateway {
+  @SubscribeMessage('terminal-input')
+  async handleTerminalInput(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: TerminalInputDto
+  ) {
+    // Forward input to container
+    const result = await this.containerService.sendInput(
+      data.sessionId, 
+      data.command
+    );
+    
+    // Emit response back to client
+    client.emit('terminal-output', result);
+  }
+}
+```
+
+**Learning Focus**: Event-driven architecture, connection lifecycle, scaling WebSocket connections.
+
+### 5. Container Orchestration & Environment Management
+```typescript
+// Kubernetes client integration for dynamic environment provisioning
+// Concepts: Pods, Services, Deployments, Resource management
+
+@Injectable()
+export class EnvironmentService {
+  async createEnvironment(userId: string, template: string): Promise<Environment> {
+    // Create isolated container environment
+    const deployment = await this.k8sClient.createDeployment({
+      metadata: { name: `env-${userId}-${Date.now()}` },
+      spec: {
+        replicas: 1,
+        template: {
+          spec: {
+            containers: [{
+              name: 'learning-env',
+              image: `kasm-pro/${template}:latest`,
+              resources: {
+                limits: { memory: '512Mi', cpu: '500m' },
+                requests: { memory: '256Mi', cpu: '250m' }
+              }
+            }]
+          }
+        }
+      }
+    });
+    
+    return this.mapToEnvironment(deployment);
+  }
+}
+```
+
+**Learning Focus**: Container lifecycle, resource management, orchestration patterns.
+
+## Code Analysis Guidelines
+
+### When Reviewing Changes (Git Diff Analysis)
+
+**1. Architecture Patterns**
+- Identify which microservice patterns are being implemented
+- Analyze service boundaries and communication methods
+- Look for separation of concerns and single responsibility principle
+
+**2. Security Implementations**
+- Check authentication and authorization mechanisms
+- Verify input validation and sanitization
+- Review error handling and information disclosure
+
+**3. Performance Considerations**
+- Analyze database query patterns and indexing strategies
+- Look for caching implementations (Redis usage)
+- Check for potential memory leaks or resource management issues
+
+**4. Scalability Patterns**
+- Identify stateless vs stateful components
+- Look for horizontal scaling considerations
+- Check for proper connection pooling and resource limits
+
+### Questions to Ask During Code Review
+
+1. **Service Design**: How does this change affect service boundaries?
+2. **Data Flow**: How does data move between services and layers?
+3. **Error Handling**: What happens when this operation fails?
+4. **Security**: Are there any security implications?
+5. **Performance**: Will this scale under load?
+6. **Testing**: How can this functionality be tested?
+
+## Learning Checkpoints
+
+### Beginner Backend Concepts
+- [ ] Understanding HTTP methods and status codes
+- [ ] Basic authentication vs authorization
+- [ ] RESTful API design principles
+- [ ] Database normalization and relationships
+
+### Intermediate Backend Concepts
+- [ ] Microservices communication patterns
+- [ ] Advanced authentication (JWT, OAuth2)
+- [ ] WebSocket implementation and scaling
+- [ ] Container basics and Docker
+
+### Advanced Backend Concepts
+- [ ] Service mesh and API gateway patterns
+- [ ] Event-driven architecture
+- [ ] Kubernetes orchestration
+- [ ] Reactive programming with RxJS
+- [ ] Database sharding and replication
+- [ ] Distributed system challenges (CAP theorem)
+
+## Technology Deep Dives
+
+### NestJS Advanced Features
+- **Decorators**: Understanding metadata and reflection
+- **Dependency Injection**: IoC container and provider patterns
+- **Guards & Interceptors**: Aspect-oriented programming
+- **Pipes**: Data transformation and validation
+- **Modules**: Encapsulation and feature organization
+
+### RxJS Operators & Patterns
+- **Creation**: `of`, `from`, `interval`, `fromEvent`
+- **Transformation**: `map`, `mergeMap`, `switchMap`, `concatMap`
+- **Filtering**: `filter`, `take`, `debounceTime`, `distinctUntilChanged`
+- **Error Handling**: `catchError`, `retry`, `retryWhen`
+- **Combination**: `merge`, `combineLatest`, `zip`, `forkJoin`
+
+### Docker & Kubernetes Concepts
+- **Container Lifecycle**: Build, ship, run paradigm
+- **Multi-stage builds**: Optimization and security
+- **Networking**: Service discovery and load balancing
+- **Persistent Storage**: Volumes and persistent volume claims
+- **Security**: Pod security policies and network policies
+
+## Debugging & Troubleshooting Guide
+
+### Common Backend Issues
+1. **Memory Leaks**: Unclosed connections, event listeners
+2. **Deadlocks**: Database transactions and resource contention
+3. **Race Conditions**: Async operations and shared state
+4. **Scale Issues**: Connection pooling and resource limits
+
+### Monitoring & Observability
+- **Logging Levels**: Error, warn, info, debug
+- **Metrics**: Response times, error rates, throughput
+- **Tracing**: Request flow through microservices
+- **Health Checks**: Service availability and readiness
+
+## Documentation & Learning Workflow
+
+### **IMPORTANT: Save Learning Documentation**
+When using this backend learning guide to analyze code or explain concepts:
+
+1. **Always ask the user**: "Would you like me to save this analysis/explanation as a learning document?"
+2. **If the user agrees**, save the documentation to `/docs/learning/[topic-name].md`
+3. **Include in the document**:
+   - Detailed technical explanation
+   - Code examples with annotations
+   - Learning takeaways and patterns identified
+   - References to source files analyzed
+   - Next learning steps
+   - Generation timestamp and context
+
+### Documentation Structure
+```
+docs/learning/
+├── architecture/
+│   ├── microservices-patterns.md
+│   ├── api-gateway-design.md
+│   └── service-mesh-concepts.md
+├── patterns/
+│   ├── circuit-breaker-implementation.md
+│   ├── caching-strategies.md
+│   └── error-handling-patterns.md
+├── security/
+│   ├── jwt-authentication.md
+│   ├── header-sanitization.md
+│   └── cors-configuration.md
+└── performance/
+    ├── database-optimization.md
+    ├── connection-pooling.md
+    └── monitoring-strategies.md
+```
+
+## Action Items for Learning
+
+### Daily Practice
+- Review one backend service implementation
+- Understand one RxJS operator in depth
+- Analyze one database query optimization
+- Study one security implementation
+- **Document one learning insight** in `/docs/learning/`
+
+### Weekly Goals
+- Complete one microservice feature end-to-end
+- Implement one advanced authentication feature
+- Deploy one service to Kubernetes
+- Write comprehensive tests for one service
+- **Create one comprehensive learning document** covering a major concept
+
+### Project Milestones
+- [ ] Understand the complete request flow from frontend to database
+- [ ] Implement a new microservice from scratch
+- [ ] Design and implement a new authentication mechanism
+- [ ] Optimize a database query for performance
+- [ ] Debug a production issue using logs and metrics
+- [ ] **Build a personal learning knowledge base** with 10+ documented concepts
+
+---
+
+**Remember**: Each line of code is an opportunity to learn. Question assumptions, understand trade-offs, and always consider the "why" behind implementation decisions. **Always document your learning journey for future reference and knowledge sharing.**
