@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   UnauthorizedException,
   Logger,
+  Optional,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Reflector } from "@nestjs/core";
@@ -16,7 +17,7 @@ export class DynamicAuthGuard extends AuthGuard("jwt") {
 
   constructor(
     private reflector: Reflector,
-    private routeConfigService: RouteConfigService
+    @Optional() private routeConfigService?: RouteConfigService
   ) {
     super();
   }
@@ -39,23 +40,29 @@ export class DynamicAuthGuard extends AuthGuard("jwt") {
       return true;
     }
 
-    // Check route configuration to see if auth is required
-    const routeConfig = this.routeConfigService.findRoute(
-      request.path,
-      request.method
-    );
-
-    if (routeConfig && !routeConfig.requiresAuth) {
-      this.logger.debug(
-        `🔓 Route configured as public: ${request.method} ${request.path}`
+    // Check route configuration to see if auth is required (if service is available)
+    if (this.routeConfigService) {
+      const routeConfig = this.routeConfigService.findRoute(
+        request.path,
+        request.method
       );
-      return true;
-    }
 
-    // If no route config found, default to requiring auth
-    if (!routeConfig) {
+      if (routeConfig && !routeConfig.requiresAuth) {
+        this.logger.debug(
+          `🔓 Route configured as public: ${request.method} ${request.path}`
+        );
+        return true;
+      }
+
+      // If no route config found, log warning but continue with auth check
+      if (!routeConfig) {
+        this.logger.warn(
+          `⚠️ No route config found for ${request.method} ${request.path}, requiring auth by default`
+        );
+      }
+    } else {
       this.logger.warn(
-        `⚠️ No route config found for ${request.method} ${request.path}, requiring auth by default`
+        `⚠️ RouteConfigService not available, falling back to @Public() decorator only`
       );
     }
 
