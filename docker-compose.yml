@@ -83,7 +83,7 @@ services:
           "CMD",
           "node",
           "-e",
-          "const http = require('http'); const req = http.request({hostname: 'localhost', port: 9600, path: '/api/health/ready', timeout: 2000}, (res) => { if (res.statusCode === 200) process.exit(0); else process.exit(1); }); req.on('error', () => process.exit(1)); req.end();",
+          "const http = require('http'); const req = http.request({hostname: 'localhost', port: 9600, path: '/health/ready', timeout: 2000}, (res) => { if (res.statusCode === 200) process.exit(0); else process.exit(1); }); req.on('error', () => process.exit(1)); req.end();",
         ]
       interval: 30s
       timeout: 3s

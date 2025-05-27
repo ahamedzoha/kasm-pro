@@ -45,7 +45,7 @@ EXPOSE 9600
 # Health check - using the fast /api/health/ready endpoint
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "const http = require('http'); \
-    const req = http.request({hostname: 'localhost', port: 9600, path: '/api/health/ready', timeout: 2000}, (res) => { \
+    const req = http.request({hostname: 'localhost', port: 9600, path: '/health/ready', timeout: 2000}, (res) => { \
       if (res.statusCode === 200) process.exit(0); else process.exit(1); \
     }); \
     req.on('error', () => process.exit(1)); \

@@ -54,21 +54,17 @@ async function bootstrap() {
     })
   );
 
-  // Set global prefix
-  const globalPrefix = "api";
-  app.setGlobalPrefix(globalPrefix);
+  // No global prefix needed - we handle /api routes in controllers
+  // const globalPrefix = "api";
+  // app.setGlobalPrefix(globalPrefix);
 
   // Get port from environment
   const port = process.env.PORT || 9600; // Using port 9600 as specified by user
 
   await app.listen(port);
 
-  Logger.log(
-    `🚀 API Gateway is running on: http://localhost:${port}/${globalPrefix}`
-  );
-  Logger.log(
-    `🏥 Health check available at: http://localhost:${port}/${globalPrefix}/health`
-  );
+  Logger.log(`🚀 API Gateway is running on: http://localhost:${port}`);
+  Logger.log(`🏥 Health check available at: http://localhost:${port}/health`);
   Logger.log(`📊 Ready for proxying requests to microservices`);
 }
 

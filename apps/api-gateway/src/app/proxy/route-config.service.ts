@@ -82,22 +82,26 @@ export class RouteConfigService {
   }
 
   private initializeRoutes() {
-    // Define route mappings
+    // Define route mappings with version support
     const routeConfigs: RouteConfig[] = [
-      // Auth service routes
+      // ======================
+      // API VERSION 1 (Current)
+      // ======================
+
+      // Auth service routes - v1
       {
         service: "auth",
         baseUrl: "",
         path: "/api/v1/user/login",
         methods: ["POST"],
-        requiresAuth: false, // Login doesn't require auth
+        requiresAuth: false,
       },
       {
         service: "auth",
         baseUrl: "",
         path: "/api/v1/user/register",
         methods: ["POST"],
-        requiresAuth: false, // Registration doesn't require auth
+        requiresAuth: false,
       },
       {
         service: "auth",
@@ -109,19 +113,26 @@ export class RouteConfigService {
       {
         service: "auth",
         baseUrl: "",
+        path: "/api/v1/user/:id",
+        methods: ["GET", "PUT", "DELETE"],
+        requiresAuth: true,
+      },
+      {
+        service: "auth",
+        baseUrl: "",
         path: "/api/v1/auth/status",
         methods: ["GET"],
-        requiresAuth: false, // Status check for marketing site
+        requiresAuth: false,
       },
 
-      // Environment service routes
+      // Environment service routes - v1
       {
         service: "environment-service",
         baseUrl: "",
         path: "/api/v1/environment",
         methods: ["POST", "GET", "PUT", "DELETE"],
         requiresAuth: true,
-        rateLimit: { ttl: 60000, limit: 10 }, // 10 requests per minute for environment operations
+        rateLimit: { ttl: 60000, limit: 10 },
       },
       {
         service: "environment-service",
@@ -131,7 +142,7 @@ export class RouteConfigService {
         requiresAuth: true,
       },
 
-      // Challenge service routes
+      // Challenge service routes - v1
       {
         service: "challenge-service",
         baseUrl: "",
@@ -142,12 +153,12 @@ export class RouteConfigService {
       {
         service: "challenge-service",
         baseUrl: "",
-        path: "/api/v1/challenge",
+        path: "/api/v1/challenge/:id",
         methods: ["GET", "PUT"],
         requiresAuth: true,
       },
 
-      // Progress service routes
+      // Progress service routes - v1
       {
         service: "progress-service",
         baseUrl: "",
@@ -162,6 +173,23 @@ export class RouteConfigService {
         methods: ["GET"],
         requiresAuth: true,
       },
+
+      // ======================
+      // API VERSION 2 (Future)
+      // ======================
+      // When ready, add v2 routes that can:
+      // - Point to new service versions
+      // - Have different auth requirements
+      // - Support new features
+
+      // Example v2 routes (commented for now):
+      // {
+      //   service: "auth-v2", // Could be a new service or same service with v2 controllers
+      //   baseUrl: "",
+      //   path: "/api/v2/auth/login",
+      //   methods: ["POST"],
+      //   requiresAuth: false,
+      // },
     ];
 
     routeConfigs.forEach((config) => {
@@ -172,6 +200,20 @@ export class RouteConfigService {
     this.logger.log(
       `📋 Initialized ${routeConfigs.length} route configurations`
     );
+    this.logger.log(
+      `🏷️ Supported API versions: v1 ${this.getSupportedVersions().join(", ")}`
+    );
+  }
+
+  getSupportedVersions(): string[] {
+    const versions = new Set<string>();
+    for (const [path] of this.routes.entries()) {
+      const versionMatch = path.match(/\/api\/(v\d+)\//);
+      if (versionMatch) {
+        versions.add(versionMatch[1]);
+      }
+    }
+    return Array.from(versions).sort();
   }
 
   findRoute(path: string, method: string): RouteConfig | null {

@@ -6,7 +6,7 @@
     "docker:build": "docker compose build",
     "docker:up": "docker compose up",
     "docker:down": "docker compose down",
-    "docker:deps": "docker compose up postgres mongodb redis",
+    "docker:deps": "docker compose up postgres mongodb redis -d",
     "docker:services": "docker compose up postgres mongodb redis api-gateway auth-service environment-service challenge-service progress-service terminal-service -d",
     "docker:db:reset": "docker compose down -v && docker compose up -d postgres mongodb redis",
     "docker:logs": "docker compose logs -f",

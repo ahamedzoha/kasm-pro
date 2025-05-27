@@ -11,8 +11,9 @@ import type { Request, Response } from "express";
 import { Throttle } from "@nestjs/throttler";
 import { ProxyService, ProxyRequest } from "./proxy.service";
 import { RouteConfigService } from "./route-config.service";
-import { JwtAuthGuard, IS_PUBLIC_KEY } from "../auth/guards/jwt-auth.guard";
-import { Reflector } from "@nestjs/core";
+import { DynamicAuthGuard } from "../auth/guards/dynamic-auth.guard";
+import { Public } from "../auth/decorators/public.decorator";
+import { VersionUtil } from "../common/utils/version.util";
 
 @Controller()
 export class ProxyController {
@@ -20,11 +21,11 @@ export class ProxyController {
 
   constructor(
     private readonly proxyService: ProxyService,
-    private readonly routeConfigService: RouteConfigService,
-    private readonly reflector: Reflector
+    private readonly routeConfigService: RouteConfigService
   ) {}
 
   @Get("health")
+  @Public() // Health check should be public
   @Throttle({ default: { limit: 10, ttl: 60000 } }) // 10 requests per minute
   async getHealth() {
     return {
@@ -35,22 +36,10 @@ export class ProxyController {
   }
 
   @All("api/*")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(DynamicAuthGuard)
   async proxyApiRequest(@Req() req: Request, @Res() res: Response) {
     try {
       const startTime = Date.now();
-
-      // Check if authentication is required for this route
-      const routeConfig = this.routeConfigService.findRoute(
-        req.path,
-        req.method
-      );
-      const requiresAuth = routeConfig?.requiresAuth ?? true;
-
-      // Set public key for routes that don't require auth
-      if (!requiresAuth) {
-        this.reflector.getAllAndOverride(IS_PUBLIC_KEY, []);
-      }
 
       // Build proxy request
       const proxyRequest: ProxyRequest = {
@@ -74,6 +63,18 @@ export class ProxyController {
       // Add custom headers
       res.setHeader("X-Gateway-Response-Time", `${Date.now() - startTime}ms`);
       res.setHeader("X-Gateway-Version", "1.0.0");
+
+      // Add API versioning headers
+      const currentVersion = VersionUtil.extractVersion(req.path) || "v1";
+      const supportedVersions = this.routeConfigService.getSupportedVersions();
+      const versionHeaders = VersionUtil.getVersionHeaders(
+        currentVersion,
+        supportedVersions
+      );
+
+      Object.entries(versionHeaders).forEach(([key, value]) => {
+        res.setHeader(key, value);
+      });
 
       // Send response
       res.status(proxyResponse.statusCode).json(proxyResponse.data);
@@ -101,6 +102,7 @@ export class ProxyController {
   }
 
   @All("terminal/*")
+  @UseGuards(DynamicAuthGuard)
   async proxyTerminalRequest(@Req() req: Request, @Res() res: Response) {
     try {
       // Terminal service handles WebSocket connections differently

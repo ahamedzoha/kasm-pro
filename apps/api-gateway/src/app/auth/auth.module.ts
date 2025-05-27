@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AuthService } from "./auth.service";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
+import { DynamicAuthGuard } from "./guards/dynamic-auth.guard";
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { JwtAuthGuard } from "./guards/jwt-auth.guard";
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, JwtStrategy, JwtAuthGuard],
-  exports: [AuthService, JwtAuthGuard],
+  providers: [AuthService, JwtStrategy, JwtAuthGuard, DynamicAuthGuard],
+  exports: [AuthService, JwtAuthGuard, DynamicAuthGuard],
 })
 export class AuthModule {}

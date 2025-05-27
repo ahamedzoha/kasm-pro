@@ -155,10 +155,23 @@ export class ProxyService {
 
   private buildTargetUrl(
     serviceEndpoint: ServiceEndpoint,
-    path: string,
-    query?: Record<string, string>
+    targetPath: string,
+    query?: Record<string, string>,
+    originalPath?: string,
+    routePath?: string
   ): string {
-    let targetUrl = `${serviceEndpoint.baseUrl}${path}`;
+    let finalPath = targetPath;
+
+    // Handle parameter substitution if originalPath and routePath are provided
+    if (originalPath && routePath) {
+      finalPath = this.substitutePathParameters(
+        targetPath,
+        originalPath,
+        routePath
+      );
+    }
+
+    let targetUrl = `${serviceEndpoint.baseUrl}${finalPath}`;
 
     if (query && Object.keys(query).length > 0) {
       const queryString = new URLSearchParams(query).toString();
@@ -166,6 +179,48 @@ export class ProxyService {
     }
 
     return targetUrl;
+  }
+
+  private substitutePathParameters(
+    targetPath: string,
+    originalPath: string,
+    routePath: string
+  ): string {
+    // Handle wildcard routes
+    if (routePath.includes("*")) {
+      // Extract the base path and wildcard part
+      const routeBase = routePath.replace("/*", "");
+      const targetBase = targetPath.replace("/*", "");
+
+      if (originalPath.startsWith(routeBase)) {
+        const wildcardPart = originalPath.substring(routeBase.length);
+        return targetBase + wildcardPart;
+      }
+    }
+
+    // Extract parameters from the original path using the route pattern
+    const routeParts = routePath.split("/");
+    const originalParts = originalPath.split("/");
+
+    const params: Record<string, string> = {};
+
+    // Build parameter map
+    for (let i = 0; i < routeParts.length; i++) {
+      if (routeParts[i].startsWith(":")) {
+        const paramName = routeParts[i].substring(1);
+        if (originalParts[i]) {
+          params[paramName] = originalParts[i];
+        }
+      }
+    }
+
+    // Substitute parameters in target path
+    let result = targetPath;
+    Object.entries(params).forEach(([key, value]) => {
+      result = result.replace(`:${key}`, value);
+    });
+
+    return result;
   }
 
   private sanitizeRequestHeaders(
