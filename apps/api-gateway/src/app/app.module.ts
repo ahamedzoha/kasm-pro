@@ -3,9 +3,11 @@ import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { HttpModule } from "@nestjs/axios";
 import { JwtModule } from "@nestjs/jwt";
-import { CacheModule } from "@nestjs/cache-manager";
-import { ConfigModule } from "@nestjs/config";
-import * as redisStore from "cache-manager-redis-store";
+import { CacheModule, CacheInterceptor } from "@nestjs/cache-manager";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { createKeyv } from "@keyv/redis";
+import { Keyv } from "keyv";
+import { CacheableMemory } from "cacheable";
 
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -13,6 +15,7 @@ import { ProxyModule } from "./proxy/proxy.module";
 import { AuthModule } from "./auth/auth.module";
 import { HealthModule } from "./health/health.module";
 import { LoggingInterceptor } from "./common/interceptors/logging.interceptor";
+import { CacheService } from "./common/services/cache.service";
 
 @Module({
   imports: [
@@ -54,12 +57,26 @@ import { LoggingInterceptor } from "./common/interceptors/logging.interceptor";
     }),
 
     // Redis Caching
-    CacheModule.register({
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const redisHost = configService.get("REDIS_HOST", "localhost");
+        const redisPort = configService.get<number>("REDIS_PORT", 6379);
+
+        return {
+          stores: [
+            // In-memory fallback store
+            new Keyv({
+              store: new CacheableMemory({ ttl: 300000, lruSize: 5000 }),
+            }),
+            // Redis primary store
+            createKeyv(`redis://${redisHost}:${redisPort}`),
+          ],
+          ttl: 300000, // 5 minutes in milliseconds (cache-manager v5+ uses milliseconds)
+        };
+      },
       isGlobal: true,
-      store: redisStore,
-      host: process.env.REDIS_HOST || "localhost",
-      port: process.env.REDIS_PORT || 6379,
-      ttl: 300, // 5 minutes default
     }),
 
     // Custom modules
@@ -70,6 +87,7 @@ import { LoggingInterceptor } from "./common/interceptors/logging.interceptor";
   controllers: [AppController],
   providers: [
     AppService,
+    CacheService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
@@ -77,6 +95,10 @@ import { LoggingInterceptor } from "./common/interceptors/logging.interceptor";
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
     },
   ],
 })

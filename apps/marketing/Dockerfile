@@ -10,7 +10,7 @@ COPY tsconfig*.json ./
 COPY nx.json ./
 
 # Install ALL dependencies (including dev dependencies for build)
-RUN npm ci --frozen-lockfile
+RUN npm ci
 
 # Copy source code and workspace files
 COPY apps/marketing ./apps/marketing
@@ -36,7 +36,7 @@ RUN addgroup -g 1001 -S nodejs && \
 
 # Copy package.json and install production dependencies
 COPY --from=builder /app/package*.json ./
-RUN npm ci --only=production --frozen-lockfile && npm cache clean --force
+RUN npm ci --only=production
 
 # Copy built application from builder stage
 # For Next.js Nx builds, the output is in apps/marketing/.next

@@ -53,6 +53,12 @@
     },
     {
       "path": "./libs/util"
+    },
+    {
+      "path": "./apps/api-gateway-e2e"
+    },
+    {
+      "path": "./apps/api-gateway"
     }
   ]
 }

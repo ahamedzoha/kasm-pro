@@ -10,7 +10,7 @@ COPY tsconfig*.json ./
 COPY nx.json ./
 
 # Install ALL dependencies (including dev dependencies for build)
-RUN npm ci --frozen-lockfile
+RUN npm ci
 
 # Copy source code and workspace files
 COPY apps/terminal-service ./apps/terminal-service
@@ -34,7 +34,7 @@ COPY --from=builder --chown=nestjs:nodejs /app/apps/terminal-service/dist ./
 COPY --from=builder --chown=nestjs:nodejs /app/package*.json ./
 
 # Install only production dependencies in runtime stage
-RUN npm ci --only=production --frozen-lockfile && npm cache clean --force
+RUN npm ci --only=production
 
 # Switch to non-root user
 USER nestjs

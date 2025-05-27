@@ -100,8 +100,6 @@ services:
       - REDIS_URL=redis://redis:6379
       - NODE_ENV=production
       - PORT=3000
-    ports:
-      - 3000:3000
     depends_on:
       postgres:
         condition: service_healthy
@@ -119,8 +117,6 @@ services:
       - REDIS_URL=redis://redis:6379
       - NODE_ENV=production
       - PORT=3001
-    ports:
-      - 3001:3001
     depends_on:
       postgres:
         condition: service_healthy
@@ -138,8 +134,6 @@ services:
       - REDIS_URL=redis://redis:6379
       - NODE_ENV=production
       - PORT=3002
-    ports:
-      - 3002:3002
     depends_on:
       mongodb:
         condition: service_healthy
@@ -157,8 +151,6 @@ services:
       - REDIS_URL=redis://redis:6379
       - NODE_ENV=production
       - PORT=3003
-    ports:
-      - 3003:3003
     depends_on:
       postgres:
         condition: service_healthy
@@ -175,8 +167,6 @@ services:
       - REDIS_URL=redis://redis:6379
       - NODE_ENV=production
       - PORT=3004
-    ports:
-      - 3004:3004
     depends_on:
       redis:
         condition: service_healthy
