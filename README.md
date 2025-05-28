@@ -164,14 +164,15 @@ graph TB
 
    ```bash
    # Copy environment templates
-   cp .env.example .env.local
+   cp .env.local.example .env.local
 
    # Set up service-specific environments
-   cp apps/auth-service/.env.example apps/auth-service/.env.local
-   cp apps/environment-service/.env.example apps/environment-service/.env.local
-   cp apps/challenge-service/.env.example apps/challenge-service/.env.local
-   cp apps/progress-service/.env.example apps/progress-service/.env.local
-   cp apps/terminal-service/.env.example apps/terminal-service/.env.local
+   cp apps/auth-service/.env.local.example apps/auth-service/.env.local
+   cp apps/environment-service/.env.local.example apps/environment-service/.env.local
+   cp apps/challenge-service/.env.local.example apps/challenge-service/.env.local
+   cp apps/progress-service/.env.local.example apps/progress-service/.env.local
+   cp apps/terminal-service/.env.local.example apps/terminal-service/.env.local
+   cp apps/api-gateway/.env.local.example apps/api-gateway/.env.local
    ```
 
 4. **Start development databases**

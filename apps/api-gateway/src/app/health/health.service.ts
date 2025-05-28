@@ -28,7 +28,6 @@ export class HealthService {
   async getHealthStatus(): Promise<HealthStatus> {
     const uptime = Date.now() - this.startTime;
     const redisHealth = await this.checkRedis();
-
     // Determine overall status
     let status: "healthy" | "unhealthy" | "degraded" = "healthy";
     if (redisHealth.status === "unhealthy") {

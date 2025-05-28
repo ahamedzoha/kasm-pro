@@ -38,7 +38,7 @@ export class RouteConfigService {
           "AUTH_SERVICE_URL",
           "http://auth-service:3000"
         ),
-        healthPath: "/api/health",
+        healthPath: "/health",
       },
       {
         name: "environment-service",
@@ -122,7 +122,14 @@ export class RouteConfigService {
         baseUrl: "",
         path: "/api/v1/auth/status",
         methods: ["GET"],
-        requiresAuth: false,
+        requiresAuth: true,
+      },
+      {
+        service: "auth",
+        baseUrl: "",
+        path: "/api/v1/auth/health",
+        methods: ["GET"],
+        requiresAuth: true,
       },
 
       // Environment service routes - v1
